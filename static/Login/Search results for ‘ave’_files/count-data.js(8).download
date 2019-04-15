@@ -1,0 +1,5 @@
+var DISQUSWIDGETS;
+
+if (typeof DISQUSWIDGETS != 'undefined') {
+    DISQUSWIDGETS.displayCount({"text":{"and":"and","comments":{"zero":"0<span> Comments<\/span>","multiple":"{num}<span> Comments<\/span>","one":"1<span> Comment<\/span>"}},"counts":[{"id":"entry6675","comments":0},{"id":"entry9460","comments":0},{"id":"entry9005","comments":0},{"id":"entry6685","comments":0}]});
+}

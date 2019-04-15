@@ -1,0 +1,8 @@
+if(window.vscr && vscr.respond) vscr.respond({
+    "status":true,
+    "params":{
+        "aid":"c-a-crowdcube-uk",
+        "vid":"1594271241319a000092c7b00c000001",
+        "sid":"159429740b68db0000942d520b000001"
+    }
+});

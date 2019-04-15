@@ -1,0 +1,233 @@
+
+(function() {
+	window.queue=queue;
+
+	function queue(parallelism) {
+		var queue = {},
+		active = 0, // number of in-flight deferrals
+		remaining = 0, // number of deferrals remaining
+		head, tail, // singly-linked list of deferrals
+		error = null,
+		results = [],
+		await = noop,
+		awaitAll;
+
+		if (arguments.length < 1) parallelism = Infinity;
+
+		queue.defer = function() {
+			if (!error) {
+				var node = arguments;
+				node.index = results.push(undefined) - 1;
+				if (tail) tail.next = node, tail = tail.next;
+				else head = tail = node;
+				++remaining;
+				pop();
+			}
+			return queue;
+		};
+
+		queue.await = function(f) {
+			await = f;
+			awaitAll = false;
+			if (!remaining) notify();
+			return queue;
+		};
+
+		queue.awaitAll = function(f) {
+			await = f;
+			awaitAll = true;
+			if (!remaining) notify();
+			return queue;
+		};
+
+		function pop() {
+			if (head && active < parallelism) {
+				var node = head,
+				f = node[0],
+				a = Array.prototype.slice.call(node, 1),
+				i = node.index;
+				if (head === tail) head = tail = null;
+				else head = head.next;
+				++active;
+				a.push(function(e, r) {
+					--active;
+					if (error != null) return;
+					if (e != null) {
+						// clearing remaining cancels subsequent callbacks
+						// clearing head stops queued tasks from being executed
+						// setting error ignores subsequent calls to defer
+						error = e;
+						remaining = results = head = tail = null;
+						notify();
+					} else {
+						results[i] = r;
+						if (--remaining) pop();
+						else notify();
+					}
+				});
+				f.apply(null, a);
+			}
+		}
+
+		function notify() {
+			if (error != null) await(error);
+			else if (awaitAll) await(null, results);
+			else await.apply(null, [null].concat(results));
+		}
+
+		return queue;
+	}
+
+	function noop() {}
+})();
+
+
+(function(window){
+	if(window.UL) return;
+	var UL={};
+	UL.classes={};
+
+
+	var waitingCallbacks={};
+
+	UL.register=function(meta, closure){
+		//console.log("register", meta.id)
+		UL.classes[meta.id]={
+			meta:meta,
+			closure:closure()
+		}
+		if(waitingCallbacks[meta.id]){
+			for(var i in waitingCallbacks[meta.id]){
+				waitingCallbacks[meta.id][i](null, UL.classes[meta.id].closure);
+			}
+		}
+	}
+
+
+
+	window.UL=UL;
+})(window);
+
+
+// backgroundPosition[X,Y] get hooks
+UL.register({
+	id:"bgpos",
+	version:1
+}, function(){
+	var $div = $('<div style="background-position: 3px 5px">');
+	$.support.backgroundPosition   = $div.css('backgroundPosition')  === "3px 5px" ? true : false;
+	$.support.backgroundPositionXY = $div.css('backgroundPositionX') === "3px" ? true : false;
+	$div = null;
+
+	var xy = ["X","Y"];
+
+	// helper function to parse out the X and Y values from backgroundPosition
+	function parseBgPos(bgPos) {
+		var parts  = bgPos.split(/\s/),
+		values = {
+			"X": parts[0],
+			"Y": parts[1]
+		};
+		return values;
+	}
+
+	if (!$.support.backgroundPosition && $.support.backgroundPositionXY) {
+		$.cssHooks.backgroundPosition = {
+			get: function( elem, computed, extra ) {
+				return $.map(xy, function( l, i ) {
+					return $.css(elem, "backgroundPosition" + l);
+				}).join(" ");
+			},
+			set: function( elem, value ) {
+				$.each(xy, function( i, l ) {
+					var values = parseBgPos(value);
+					elem.style[ "backgroundPosition" + l ] = values[ l ];
+				});
+			}
+		};
+	}
+
+	if ($.support.backgroundPosition && !$.support.backgroundPositionXY) {
+		$.each(xy, function( i, l ) {
+			$.cssHooks[ "backgroundPosition" + l ] = {
+				get: function( elem, computed, extra ) {
+					var values = parseBgPos( $.css(elem, "backgroundPosition") );
+					return values[ l ];
+				},
+				set: function( elem, value ) {
+					var values = parseBgPos( $.css(elem, "backgroundPosition") ),
+					isX = l === "X";
+					elem.style.backgroundPosition = (isX ? value : values[ "X" ]) + " " +
+					(isX ? values[ "Y" ] : value);
+				}
+			};
+			$.fx.step[ "backgroundPosition" + l ] = function( fx ) {
+				$.cssHooks[ "backgroundPosition" + l ].set( fx.elem, fx.now + fx.unit );
+			};
+		});
+	}
+})
+
+
+totaliser=function(totalFunded) {
+
+	ULNumber=function(div, diff, s){
+		var self=this;
+		var $div=$(div);
+		$div.css({
+			"background-position":"0px 0px"
+		});
+		var curr=0;
+		self.move=function(n, cb){
+			var q=queue(1);
+			var t1=s*Math.abs(curr-n);
+			if(curr>n){
+				t1=s*Math.abs(0-n);
+				q.defer(_moveAnimation, 10, s*Math.abs(curr-10))
+				q.defer(function(cb){
+					$div.css({
+						"background-position":"0px 0px"
+					});
+					cb();
+				})
+			}
+			q.defer(_moveAnimation, n, t1);
+			q.await(cb);
+		}
+		function _moveAnimation(n, t, cb){
+			var pos=-diff*n;
+			$div.stop().animate({
+				backgroundPositionY:pos+"px"
+			},t, "swing", cb);
+			curr=n;
+		}
+	}
+	ULNumberSet=function(qq){
+		var numbers=[];
+		for(var i=1;i<qq+1;i++){
+			numbers.push(new ULNumber("#ul"+(i), 129.5, 100+(30*(qq-i)))); // 129.5, 300+(Math.random()*100)));
+		}
+		var self=this;
+		self.set=function(n, cb){
+			n=Math.round(n);
+			var digits=String(n);
+			var q=queue();
+			var o=[]
+			for(var i=0;i<digits.length;i++) o[i]=digits[i];
+			o.reverse();
+			for(var i=0;i<o.length;i++){
+				//console.log(digits.length-i)
+				q.defer(numbers[digits.length-i-1].move,o[i]);
+			}
+			if(!cb)cb=function(){};
+			q.await(cb)
+		}
+	}
+
+	var set=new ULNumberSet(8);
+	window.ulNumberSet=set;
+	if(this.NumberSetReady){
+		this.NumberSetReady(set);
+	}
+	set.set(totalFunded);
+}

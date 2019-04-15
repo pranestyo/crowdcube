@@ -1,0 +1,471 @@
+jQuery(document).ready(function($) {
+
+    if (document.getElementById("si_popup")) {
+        $("#si_popup").qtip({
+            content: $('#qtip_si_info').html(),
+            position: {
+                corner: {
+                    tooltip: 'leftMiddle',
+                    target: 'rightMiddle'
+                }
+            },
+            style: {
+                width: 500,
+                padding: 15,
+                background: qTipBackground,
+                color: qTipText,
+                textAlign: 'left',
+                border: {
+                    width: qTipBorderWidth,
+                    radius: qTipRadius,
+                    color: qTipBorder
+                },
+                tip: 'leftMiddle',
+                name: 'dark'
+            }
+        });
+    }
+
+    if (document.getElementById("PRF_referral_code_tooltip")) {
+        $("#PRF_referral_code_tooltip").qtip({
+            content: "If you have been referred to Crowdcube by a third party Crowdcube Affiliate please enter their unique Referrer Code here.",
+            position: {
+                corner: {
+                    tooltip: 'bottomMiddle',
+                    target: 'topMiddle'
+                }
+            },
+            style: {
+                width: 300,
+                padding: 15,
+                background: qTipBackground,
+                color: qTipText,
+                textAlign: 'left',
+                border: {
+                    width: qTipBorderWidth,
+                    radius: qTipRadius,
+                    color: qTipBorder
+                },
+                tip: 'bottomMiddle',
+                name: 'dark'
+            }
+        });
+    }
+
+    if (document.getElementById("PRF_company_number_tooltip")) {
+        $("#PRF_company_number_tooltip").qtip({
+            content: "This can also be called the Company Registration Number (CRN) and is allocated by Companies House on registration of a company. It is an eight-digit number. Leading zeros are required. Scotland and Northern Ireland have an additional prefix of SC and NI respectively.",
+            position: {
+                corner: {
+                    tooltip: 'bottomMiddle',
+                    target: 'topMiddle'
+                }
+            },
+            style: {
+                width: 300,
+                padding: 15,
+                background: qTipBackground,
+                color: qTipText,
+                textAlign: 'left',
+                border: {
+                    width: qTipBorderWidth,
+                    radius: qTipRadius,
+                    color: qTipBorder
+                },
+                tip: 'bottomMiddle',
+                name: 'dark'
+            }
+        });
+    }
+
+    if (document.getElementById("PRF_company_stage_tooltip")) {
+        $("#PRF_company_stage_tooltip").qtip({
+            content: $('#qtip_company_stage').html(),
+            position: {
+                corner: {
+                    tooltip: 'bottomMiddle',
+                    target: 'topMiddle'
+                }
+            },
+            style: {
+                width: 400,
+                padding: 15,
+                background: qTipBackground,
+                color: qTipText,
+                textAlign: 'left',
+                border: {
+                    width: qTipBorderWidth,
+                    radius: qTipRadius,
+                    color: qTipBorder
+                },
+                tip: 'bottomMiddle',
+                name: 'dark'
+            }
+        });
+    }
+
+    if (document.getElementById("PRF_inv_secured_tooltip")) {
+        $("#PRF_inv_secured_tooltip").qtip({
+            content: "Please tell us about any investment that you have already secured in this round of fund raising so we can add it to your progress. Businesses that can show early investment and momentum are more likely to be successful.",
+            position: {
+                corner: {
+                    tooltip: 'bottomMiddle',
+                    target: 'topMiddle'
+                }
+            },
+            style: {
+                width: 200,
+                padding: 15,
+                background: qTipBackground,
+                color: qTipText,
+                textAlign: 'left',
+                border: {
+                    width: qTipBorderWidth,
+                    radius: qTipRadius,
+                    color: qTipBorder
+                },
+                tip: 'bottomMiddle',
+                name: 'dark'
+            }
+        });
+    }
+
+    if (document.getElementById("PRF_description_tooltip")) {
+        $("#PRF_description_tooltip").qtip({
+            content: "Please give a summary of your business investment opportunity.",
+            position: {
+                corner: {
+                    tooltip: 'bottomMiddle',
+                    target: 'topMiddle'
+                }
+            },
+            style: {
+                width: 200,
+                padding: 15,
+                background: qTipBackground,
+                color: qTipText,
+                textAlign: 'left',
+                border: {
+                    width: qTipBorderWidth,
+                    radius: qTipRadius,
+                    color: qTipBorder
+                },
+                tip: 'bottomMiddle',
+                name: 'dark'
+            }
+        });
+    }
+
+    if (document.getElementById("PRF_linkedin_tooltip")) {
+        $("PRF_linkedin_tooltip").qtip({
+            content: "If you have a LinkedIn profile please enter your profile URL here.",
+            position: {
+                corner: {
+                    tooltip: 'bottomMiddle',
+                    target: 'topMiddle'
+                }
+            },
+            style: {
+                width: 200,
+                padding: 15,
+                background: qTipBackground,
+                color: qTipText,
+                textAlign: 'left',
+                border: {
+                    width: qTipBorderWidth,
+                    radius: qTipRadius,
+                    color: qTipBorder
+                },
+                tip: 'bottomMiddle',
+                name: 'dark'
+            }
+        });
+    }
+
+    if (document.getElementById("PRF_investment_request_tooltip")) {
+        $("#PRF_investment_request_tooltip").qtip({
+            content: 'This minimum investment required is £20,000',
+            position: {
+                corner: {
+                    tooltip: 'bottomMiddle',
+                    target: 'topMiddle'
+                }
+            },
+            style: {
+                width: 200,
+                padding: 15,
+                background: qTipBackground,
+                color: qTipText,
+                textAlign: 'left',
+                border: {
+                    width: qTipBorderWidth,
+                    radius: qTipRadius,
+                    color: qTipBorder
+                },
+                tip: 'bottomMiddle',
+                name: 'dark'
+            }
+        });
+    }
+
+    if (document.getElementById("PRF_equity_offered_tooltip")) {
+        $("#PRF_equity_offered_tooltip").qtip({
+            content: "The is the amount of equity ownership in your business, in percentage terms, that you're offering in exchange for investment.",
+            position: {
+                corner: {
+                    tooltip: 'bottomMiddle',
+                    target: 'topMiddle'
+                }
+            },
+            style: {
+                width: 200,
+                padding: 15,
+                background: qTipBackground,
+                color: qTipText,
+                textAlign: 'left',
+                border: {
+                    width: qTipBorderWidth,
+                    radius: qTipRadius,
+                    color: qTipBorder
+                },
+                tip: 'bottomMiddle',
+                name: 'dark'
+            }
+        });
+    }
+
+    if (document.getElementById("PRF_eis_tooltip")) {
+        $("#PRF_eis_tooltip").qtip({
+            content: "Investors can get 30% tax relief in EIS qualifying businesses.  Speak to one of our advisors to find out more about EIS.",
+            position: {
+                corner: {
+                    tooltip: 'bottomMiddle',
+                    target: 'topMiddle'
+                }
+            },
+            style: {
+                width: 200,
+                padding: 15,
+                background: qTipBackground,
+                color: qTipText,
+                textAlign: 'left',
+                border: {
+                    width: qTipBorderWidth,
+                    radius: qTipRadius,
+                    color: qTipBorder
+                },
+                tip: 'bottomMiddle',
+                name: 'dark'
+            }
+        });
+    }
+
+    if (document.getElementById("PRF_seis_tooltip")) {
+        $("#PRF_seis_tooltip").qtip({
+            content: "Investors can get 50% tax relief in SEIS qualifying businesses.  Speak to one of our advisors to find out more about SEIS.",
+            position: {
+                corner: {
+                    tooltip: 'bottomMiddle',
+                    target: 'topMiddle'
+                }
+            },
+            style: {
+                width: 200,
+                padding: 15,
+                background: qTipBackground,
+                color: qTipText,
+                textAlign: 'left',
+                border: {
+                    width: qTipBorderWidth,
+                    radius: qTipRadius,
+                    color: qTipBorder
+                },
+                tip: 'bottomMiddle',
+                name: 'dark'
+            }
+        });
+    }
+
+    if (document.getElementById("PRF_business_plan_tooltip")) {
+        $("#PRF_business_plan_tooltip").qtip({
+            content: 'Please upload a business plan detailing your business and its investment opportunity. You should consider what makes your business investable and how an investor will get a return on their investment. Maximum file size 20mb.',
+            position: {
+                corner: {
+                    tooltip: 'bottomMiddle',
+                    target: 'topMiddle'
+                }
+            },
+            style: {
+                width: 300,
+                padding: 15,
+                background: qTipBackground,
+                color: qTipText,
+                textAlign: 'left',
+                border: {
+                    width: qTipBorderWidth,
+                    radius: qTipRadius,
+                    color: qTipBorder
+                },
+                tip: 'bottomMiddle',
+                name: 'dark'
+            }
+        });
+    }
+
+    if (document.getElementById("PRF_financial_forecasts_tooltip")) {
+        $("#PRF_financial_forecasts_tooltip").qtip({
+            content: 'Please upload three years\' financial forecasts, including cash flow, profit and loss and balance sheet. Maximum file size 20mb.',
+            position: {
+                corner: {
+                    tooltip: 'bottomMiddle',
+                    target: 'topMiddle'
+                }
+            },
+            style: {
+                width: 300,
+                padding: 15,
+                background: qTipBackground,
+                color: qTipText,
+                textAlign: 'left',
+                border: {
+                    width: qTipBorderWidth,
+                    radius: qTipRadius,
+                    color: qTipBorder
+                },
+                tip: 'bottomMiddle',
+                name: 'dark'
+            }
+        });
+    }
+
+    if (document.getElementById("PRF_employees_later_tooltip")) {
+        $("#PRF_employees_later_tooltip").qtip({
+            content: "This is so that we can estimate Crowdcube's impact on job creation if you reach your target.",
+            position: {
+                corner: {
+                    tooltip: 'bottomMiddle',
+                    target: 'topMiddle'
+                }
+            },
+            style: {
+                width: 200,
+                padding: 15,
+                background: qTipBackground,
+                color: qTipText,
+                textAlign: 'left',
+                border: {
+                    width: qTipBorderWidth,
+                    radius: qTipRadius,
+                    color: qTipBorder
+                },
+                tip: 'bottomMiddle',
+                name: 'dark'
+            }
+        });
+    }
+
+    if (document.getElementById("PRF_funding_tooltip")) {
+        $("#PRF_funding_tooltip").qtip({
+            content: "Please tell us how you have funded your business so far.",
+            position: {
+                corner: {
+                    tooltip: 'bottomMiddle',
+                    target: 'topMiddle'
+                }
+            },
+            style: {
+                width: 200,
+                padding: 15,
+                background: qTipBackground,
+                color: qTipText,
+                textAlign: 'left',
+                border: {
+                    width: qTipBorderWidth,
+                    radius: qTipRadius,
+                    color: qTipBorder
+                },
+                tip: 'bottomMiddle',
+                name: 'dark'
+            }
+        });
+    }
+
+    if (document.getElementById("PRF_press_tooltip")) {
+        $("#PRF_press_tooltip").qtip({
+            content: "We regularly get enquiries from the press and we would like to involve your business, where appropriate, to raise the profile of your business.",
+            position: {
+                corner: {
+                    tooltip: 'bottomMiddle',
+                    target: 'topMiddle'
+                }
+            },
+            style: {
+                width: 200,
+                padding: 15,
+                background: qTipBackground,
+                color: qTipText,
+                textAlign: 'left',
+                border: {
+                    width: qTipBorderWidth,
+                    radius: qTipRadius,
+                    color: qTipBorder
+                },
+                tip: 'bottomMiddle',
+                name: 'dark'
+            }
+        });
+    }
+
+    if (document.getElementById("PRF_a_shares_tooltip")) {
+        $("#PRF_a_shares_tooltip").qtip({
+            content: "Set the investment amount, above which, your investors will receive A-shares",
+            position: {
+                corner: {
+                    tooltip: 'bottomMiddle',
+                    target: 'topMiddle'
+                }
+            },
+            style: {
+                width: 200,
+                padding: 15,
+                background: qTipBackground,
+                color: qTipText,
+                textAlign: 'left',
+                border: {
+                    width: qTipBorderWidth,
+                    radius: qTipRadius,
+                    color: qTipBorder
+                },
+                tip: 'bottomMiddle',
+                name: 'dark'
+            }
+        });
+    }
+
+    if (document.getElementById("PRF_exit_tooltip")) {
+        $("#PRF_exit_tooltip").qtip({
+            content: "Please outline your exit strategy including the timing and forecast company valuation",
+            position: {
+                corner: {
+                    tooltip: 'bottomMiddle',
+                    target: 'topMiddle'
+                }
+            },
+            style: {
+                width: 200,
+                padding: 15,
+                background: qTipBackground,
+                color: qTipText,
+                textAlign: 'left',
+                border: {
+                    width: qTipBorderWidth,
+                    radius: qTipRadius,
+                    color: qTipBorder
+                },
+                tip: 'bottomMiddle',
+                name: 'dark'
+            }
+        });
+    }
+
+});

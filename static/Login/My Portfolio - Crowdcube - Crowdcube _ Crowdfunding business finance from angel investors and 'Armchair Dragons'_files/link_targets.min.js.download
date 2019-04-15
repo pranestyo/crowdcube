@@ -1,0 +1,2 @@
+!function(t){t(function(){var a=document.domain;t(document).on("click","a",function(){var n=t(this).attr("href");return void 0!==t(this).data("events")&&void 0!==t(this).data("events").click?!0:void(n&&"/"!==n.charAt(0)&&"#"!==n.charAt(0)&&!n.match(a)&&t(this).attr("target","_blank"))})})}(jQuery);
+//# sourceMappingURL=maps/link_targets.min.js.map

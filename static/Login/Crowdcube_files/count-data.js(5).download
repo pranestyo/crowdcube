@@ -1,0 +1,5 @@
+var DISQUSWIDGETS;
+
+if (typeof DISQUSWIDGETS != 'undefined') {
+    DISQUSWIDGETS.displayCount({"text":{"and":"and","comments":{"zero":"0<span> Comments<\/span>","multiple":"{num}<span> Comments<\/span>","one":"1<span> Comment<\/span>"}},"counts":[{"id":"entry16115","comments":0},{"id":"entry12742","comments":0},{"id":"entry17439","comments":0},{"id":"entry16122","comments":0},{"id":"entry16120","comments":0},{"id":"entry17116","comments":0},{"id":"entry16960","comments":0},{"id":"entry17467","comments":0},{"id":"entry17118","comments":0},{"id":"entry16688","comments":0}]});
+}

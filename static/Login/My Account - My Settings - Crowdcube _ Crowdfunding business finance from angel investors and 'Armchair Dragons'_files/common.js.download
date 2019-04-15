@@ -1,0 +1,3560 @@
+var gal_size_middle = '379x196';
+var gal_size_preview = '800x500';
+var form_flag_changed = 0;
+var ck_instance_about_orig;
+var ck_instance_about_now;
+var ck_instance_entr_description_orig;
+var ck_instance_entr_description_now;
+
+/*
+ function LoadMyJs(scriptName) {
+ var docHeadObj = document.getElementsByTagName("head")[0];
+ var dynamicScript = document.createElement("script");
+ dynamicScript.id = "ckjs_script";
+ dynamicScript.type = "text/javascript";
+ dynamicScript.src = scriptName;
+ docHeadObj.appendChild(dynamicScript);
+ }
+ */
+if (typeof (CKEDITOR) != "undefined") {
+    CKEDITOR.editorConfig = function(config)
+    {
+        config.language = 'en';
+        config.theme = 'default';
+        config.docType = '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">';
+        config.toolbar_Full =
+                [
+                    ['Cut', 'Copy', 'Paste', 'PasteText', 'PasteFromWord', '-', 'Print', 'SpellChecker', 'Scayt'],
+                    ['Undo', 'Redo', '-', 'Find', 'Replace', '-', 'SelectAll', 'RemoveFormat'],
+                    ['Form', 'Checkbox', 'Radio', 'TextField', 'Textarea', 'Select', 'Button', 'ImageButton', 'HiddenField'],
+                    '/',
+                    ['Bold', 'Italic', 'Underline', 'Strike', '-', 'Subscript', 'Superscript'],
+                    ['NumberedList', 'BulletedList', '-', 'Outdent', 'Indent'],
+                    ['JustifyLeft', 'JustifyCenter', 'JustifyRight', 'JustifyBlock'],
+                    ['Link', 'Unlink', 'Anchor'],
+                    ['Image', 'Table', 'HorizontalRule', 'Smiley', 'SpecialChar', 'PageBreak'],
+                    '/',
+                    ['Styles', 'Format', 'Font', 'FontSize'],
+                    ['TextColor', 'BGColor'],
+                    ['Maximize', 'ShowBlocks', '-', 'About']
+                ];
+        config.toolbarCanCollapse = false; // not works? Define on the CKEDITOR.replace() call
+        config.removePlugins = 'elementspath,resize'; // not works? Define on the CKEDITOR.replace() call
+        config.extraPlugins = 'onchange,placeholder,pastetext',
+                config.resize_enabled = false; // not works? Define on the CKEDITOR.replace() call
+        config.scayt_autoStartup = false; // not works? Define on the CKEDITOR.replace() call
+    }
+}
+
+function create_ckeditor(editor_id, options)
+{
+    var settings = {
+        'allowedContent': 'i; p; b; u; strong; sup; ol; ul; li; a[!href]; span[*](cke_placeholder);',
+        'skin': 'kama',
+        'toolbar':
+                [
+                    ['Bold', 'Italic', 'Underline', 'Superscript', 'NumberedList', 'BulletedList', 'Link', 'Unlink']
+                ],
+        'customConfig': '',
+        'toolbarCanCollapse': false,
+        'scayt_autoStartup': false,
+        'removePlugins': 'elementspath,resize',
+        'extraPlugins': 'onchange,placeholder,pastetext',
+        'width': '446px',
+        'height': '115px'
+    };
+
+    jQuery.extend(settings, options);
+
+    if (typeof (CKEDITOR) == "undefined") {
+        return false;
+    }
+    if ($("#" + editor_id).length == 0) {
+        return false;
+    }
+
+    CKEDITOR.replace(editor_id,
+            {
+                'allowedContent': settings.allowedContent,
+                'skin': settings.skin,
+                'toolbar': settings.toolbar,
+                'customConfig': settings.customConfig,
+                'toolbarCanCollapse': settings.toolbarCanCollapse,
+                'scayt_autoStartup': settings.scayt_autoStartup,
+                'removePlugins': settings.removePlugins,
+                'width': settings.width,
+                'height': settings.height,
+                'extraPlugins': settings.extraPlugins
+            });
+
+}
+
+function create_ckeditor_minimum(editor_id, options)
+{
+    var settings = {
+        'skin': 'kama',
+        'toolbar':
+                [
+                    ['NumberedList', 'BulletedList', 'Link', 'Unlink']
+                ],
+        'customConfig': '',
+        'toolbarCanCollapse': false,
+        'scayt_autoStartup': false,
+        'removePlugins': 'elementspath,resize',
+        'extraPlugins': 'onchange,placeholder,pastetext',
+        'width': '446px',
+        'height': '115px'
+    };
+
+    jQuery.extend(settings, options);
+
+    if (typeof (CKEDITOR) == "undefined") {
+        return false;
+    }
+    if ($("#" + editor_id).length == 0) {
+        return false;
+    }
+
+    CKEDITOR.replace(editor_id,
+            {
+                'skin': settings.skin,
+                'toolbar': settings.toolbar,
+                'customConfig': settings.customConfig,
+                'toolbarCanCollapse': settings.toolbarCanCollapse,
+                'scayt_autoStartup': settings.scayt_autoStartup,
+                'removePlugins': settings.removePlugins,
+                'width': settings.width,
+                'height': settings.height
+            });
+}
+
+var updatesOpen = false;
+var sliderHeightInvestments = "112px";
+var sliderHeightUpdates = "201px";
+var sliderHeightForum = "201px";
+var postcodeIntervalObject = null;
+var textAreaMonitorObject = null;
+var carousel = null;
+var testC = null;
+
+function submitFilterPitchTypeForm() {
+    $('#filterPitchTypeDiv ul li.closed').css('color', '#666666');
+    $('#filterform').submit();
+}
+
+function submitPortfolioFilterForm() {
+    document.forms['filterform'].submit();
+}
+
+function portfolioClearPitchFilter() {
+    $('#pid').val(0);
+    $('#pallt_id').prop('checked', true);
+    $('#palls_id').prop('checked', true);
+    document.forms['filterform'].submit();
+}
+
+function portfolioFilterSelectPitch(pitch_id) {
+    $('#pid').val(pitch_id);
+    $('#jc').val($("#portfolio_carousel").triggerHandler("currentPosition"));
+    document.forms['filterform'].submit();
+}
+
+function carouselChangePage(pageNum) {
+    $("#portfolio_carousel").trigger("slideTo", pageNum * 5);
+}
+
+var currentCarouselIndex = 0;
+
+function afterAnim() {
+    var currentPos = $("#portfolio_carousel").triggerHandler("currentPosition");
+    //console.log('POS:' + currentPos);
+
+    if (portfolio_pages < 2) {
+        return;
+    }
+    if (currentPos != currentCarouselIndex) {
+        currentCarouselIndex = currentPos;
+
+        var currentPage;
+
+        //console.log('current index:'+currentCarouselIndex);
+
+        if (currentCarouselIndex > 0 && currentCarouselIndex < 6) {
+            currentPage = 2;
+        }
+        else {
+            currentPage = Math.ceil(currentCarouselIndex / 5) + 1;
+        }
+        //console.log('Current Page:'+currentPage);
+        for (var i = 1; i <= portfolio_pages; i++) {
+            if (i == currentPage) {
+                $('#paginationLink_' + i).removeClass("button");
+                $('#paginationLink_' + i).addClass("button_inactive");
+            }
+            else {
+                $('#paginationLink_' + i).removeClass("button_inactive");
+                $('#paginationLink_' + i).addClass("button");
+            }
+        }
+    }
+
+}
+
+var qTipBackground = '#f8ebd2';
+var qTipText = '#454545';
+var qTipBorder = '#656565';
+var qTipBorderWidth = 5;
+var qTipRadius = 4;
+
+var postcodeLookupFlag = false;
+
+jQuery(document).ready(function($) {
+    $("#featuredIn > li:gt(0), #investorquote > li:gt(0)").hide();
+
+    setInterval(function() {
+        $('#featuredIn > li:first')
+                .fadeOut(1000)
+                .next()
+                .fadeIn(1000)
+                .end()
+                .appendTo('#featuredIn');
+    }, 4000);
+
+    setInterval(function() {
+        $('#investorquote > li:first')
+                .fadeOut(1000)
+                .next()
+                .fadeIn(1000)
+                .end()
+                .appendTo('#investorquote');
+    }, 7000);
+
+    if (module == 'home_page') {
+        $('#myCarousel').carousel();
+    }
+
+    $('.popup').click(function(event) {
+        var width = 575,
+                height = 400,
+                left = ($(window).width() - width) / 2,
+                top = ($(window).height() - height) / 2,
+                url = this.href,
+                opts = 'status=1' +
+                ',width=' + width +
+                ',height=' + height +
+                ',top=' + top +
+                ',left=' + left;
+
+        window.open(url, 'twitter', opts);
+
+        return false;
+    });
+
+    /*.on('slide', function(e) { randomizeSlide($(e.relatedTarget).data('slide')); });
+
+     if (document.getElementById("myCarousel")) {
+     $('.slides .text').on('click', function(e) {
+     console.log(e);
+     var casestudy = $(this).data('casestudy');
+     if(casestudy.length > 0) {
+     window.location = casestudy;
+     }
+     });
+     $('.slides .text').each(function(e) {
+     if($(this).data('casestudy').length > 0) {
+     $(this).css('cursor','pointer');
+     }
+     })
+     }*/
+
+    if (document.getElementById("portfolio_carousel")) {
+        testC = $("#portfolio_carousel").carouFredSel({
+            items: {
+                visible: 5,
+                start: portfolioJC
+            },
+            direction: "left",
+            circular: false,
+            infinite: false,
+            width: 906,
+            align: "left",
+            scroll: {
+                duration: 500
+            },
+            prev: {
+                button: '#portfolio_carousel_prev',
+                onAfter: function(data) {
+                    afterAnim();
+                }
+            },
+            next: {
+                button: '#portfolio_carousel_next',
+                onAfter: function(data) {
+                    afterAnim();
+                }
+            },
+            auto: {
+                play: false
+            }
+        });
+        document.getElementById('portfolio_carousel').style.visibility = 'visible';
+    }
+
+    if (document.getElementById("homepage_carousel")) {
+        $("#homepage_carousel").carouFredSel({
+            items: {
+                visible: 1,
+                start: 0 /*Math.floor(1 + (Math.random() * $('#homepage_carousel li').length))*/
+            },
+            direction: "left",
+            circular: true,
+            infinite: true,
+            width: 920,
+            prev: {
+                button: '#carousel_prev',
+                onBefore: function(data) {
+                    randomizePic(data);
+                }
+            },
+            next: {
+                button: '#carousel_next',
+                onBefore: function(data) {
+                    randomizePic(data);
+                }
+            },
+            auto: {
+                delay: 0,
+                items: 1,
+                duration: 350,
+                pauseOnHover: true,
+                play: true,
+                timeoutDuration: 7000
+            }
+        });
+        document.getElementById('carousel_container').style.visibility = 'visible';
+    }
+
+    function randomizePic(data) {
+        var currentPos = $("#homepage_carousel").triggerHandler("currentPosition");
+        if (currentPos > 0) {
+            var imgArr = $("div .slide" + currentPos + " .banner_img");
+            var randImg = imgArr[Math.floor(Math.random() * imgArr.length)];
+            var func = $(randImg).attr("onclick");
+            eval(func);
+        }
+    }
+
+    function randomizeSlide(slide) {
+        if (slide > 0) {
+            var imgArr = $("div .slide" + slide + " .banner_img");
+            var randImg = imgArr[Math.floor(Math.random() * imgArr.length)];
+            $(randImg).click();
+        }
+    }
+
+    $(".fancybox-thumb").fancybox({
+        prevEffect: 'none',
+        nextEffect: 'none',
+        arrows: true,
+        helpers: {
+            overlay: {
+                opacity: 0.8,
+                css: {
+                    'background-color': '#000'
+                }
+            },
+            thumbs: {
+                width: 50,
+                height: 50
+            }
+        }
+    });
+
+    if (!typeof portfolio_size != 'undefined') {
+        initTextAreaMonitor();
+    }
+    var t_height = $('#investments_table').height();
+    $('#slider_div_investments').each(function() {
+        var current = $(this);
+        current.attr("box_h", t_height);
+    });
+    $("#slider_div_investments_link").click(function() {
+        openSliderInvestments();
+    })
+
+    t_height = $('#updates_table').height();
+    $('#slider_div_updates').each(function() {
+        var current = $(this);
+        current.attr("box_h", t_height);
+    });
+    $("#slider_div_updates_link").click(function() {
+        openSliderUpdates();
+    })
+
+    t_height = $('#forum_table').height();
+    $('#slider_div_forum').each(function() {
+        var current = $(this);
+        current.attr("box_h", t_height);
+    });
+    $("#slider_div_forum_link").click(function() {
+        openSliderForum();
+    })
+
+    // This MUST preceed tabs() call! Otherwise carousel is not working properly (FF3.5, IE7, maybe all browsers)!!!
+    $('#carousel_gallery_id').jcarousel({
+        vertical: false,
+        scroll: 2
+    });
+
+    bindGalleryEffectTransition();
+
+    if (document.getElementById('id_invest_amount')) {
+        if ($('#id_invest_amount').val().trim() == 'Enter Amount' ||
+                $('#id_invest_amount').val().trim() == "Interest Amount") {
+            $('#id_invest_amount').Watermark($('#id_invest_amount').val(), {
+                'useNative': false
+            });
+        }
+    }
+    if (document.getElementById('searchTopicsInput')) {
+        if ($('#searchTopicsInput').val().trim() == "Enter Keywords") {
+            $('#searchTopicsInput').Watermark($('#searchTopicsInput').val(), {
+                'useNative': false
+            });
+        }
+    }
+    $('#form_input_file_file1').Watermark($('#form_input_file_file1').val()); // pitch edit
+    $('#form_input_file_file2').Watermark($('#form_input_file_file2').val()); // pitch edit
+    $('#form_input_file_file3').Watermark($('#form_input_file_file3').val()); // pitch edit
+
+    buttonOverStateMenuExcludeSelected('.navMenuLeft li a', 'stateOver', '.selected'); // skip selected! (used when selected differs from Over state)
+
+    // NOTE: Line 106 of jquery.styled-select.js was changed from closedSelect() -> s.change() to allow the onChange() event to fire
+    // This change will soon be committed to the trunk by the plugin author
+
+    // OnChange set the color of the text to dark (unless the 'please select' option is selected, which is pale text)
+
+    $('#filter_pitch_type_id').change(function() {
+        $('#filterPitchTypeDiv ul li.closed').css('color', '#666666');
+    });
+    $('#filter_pitch_status_id').change(function() {
+        $('#filterPitchStatusDiv ul li.closed').css('color', '#666666');
+    });
+
+    $('#form_stage_id').change(function() {
+        if ($('#form_stage_id').prop('selectedIndex') > 0) {
+            $('#stageDiv ul li.closed').css('color', '#666666');
+        }
+        else {
+            $('#stageDiv ul li.closed').css('color', '#c0c0c0');
+        }
+    });
+
+    $('#form_gender_id').change(function() {
+        if ($('#form_gender_id').prop('selectedIndex') > 0) {
+            $('#genderDiv ul li.closed').css('color', '#666666');
+        }
+        else {
+            $('#genderDiv ul li.closed').css('color', '#c0c0c0');
+        }
+    });
+
+    $('#form_revenue_id').change(function() {
+        if ($('#form_revenue_id').prop('selectedIndex') > 0) {
+            $('#revenueDiv ul li.closed').css('color', '#666666');
+        }
+        else {
+            $('#revenueDiv ul li.closed').css('color', '#c0c0c0');
+        }
+    });
+
+    $('#form_profit_id').change(function() {
+        if ($('#form_profit_id').prop('selectedIndex') > 0) {
+            $('#profitDiv ul li.closed').css('color', '#666666');
+        }
+        else {
+            $('#profitDiv ul li.closed').css('color', '#c0c0c0');
+        }
+    });
+
+    $('#form_press_id').change(function() {
+        if ($('#form_press_id').prop('selectedIndex') > 0) {
+            $('#pressDiv ul li.closed').css('color', '#666666');
+        }
+        else {
+            $('#pressDiv ul li.closed').css('color', '#c0c0c0');
+        }
+    });
+
+    $('#subject').change(function() {
+        if ($('#subject').prop('selectedIndex') >= 0) {
+            $('#subjectDiv ul li.closed').css('color', '#666666');
+        }
+        else {
+            $('#subjectDiv ul li.closed').css('color', '#c0c0c0');
+        }
+    });
+
+    create_ckeditor('form_entr_description', {
+        'width': '470px',
+        'height': '215px'
+    });
+    create_ckeditor('form_pitch_update_about', {
+        'width': '470px',
+        'height': '215px'
+    });
+    create_ckeditor('form_pitch_update_text', {
+        'width': '470px',
+        'height': '215px'
+    });
+    $('.pitchPreview').click(function() {
+        openPreviewWindow();
+        return false;
+    });
+    $("#followPitch").click(function() {
+        $(this).parent().parent().submit();
+        return false;
+    });
+
+
+    openLinksInNewWindow('.pitch_summary_view_tab .pitch_info .userText a, .pitch_summary_view_tab .entrepreneur_info .userText');
+
+    $('.contactInvestorsPopup').fancybox(
+            {
+                'afterShow': function() {
+                    $('#contactInvestorsSubjectLine').focus();
+                },
+                'afterClose': function() {
+                    $('#contactInvestorsTextarea').val('');
+                    $('#contactInvestorsSubjectLine').val('');
+                    $('#contactInvestorsBusyImage').hide();
+                    $('#contactInvestorsSendingMsg').hide();
+                    $('#contactInvestorsSuccessDiv').hide();
+                    $('#contactInvestorsErrorDiv').hide();
+                    $('#contactInvestorsButton').show();
+                    $('#contactInvestorsFormDiv').show();
+                },
+                'autoSize': true,
+                'fixed': true,
+                'openEffect': 'fade',
+                'closeEffect': 'fade',
+                'modal': false,
+                helpers: {
+                    overlay: {
+                        opacity: 0.8,
+                        css: {
+                            'background-color': '#404040'
+                        }
+                    }
+                }
+            });
+
+    $(".icon_email_friend, .icon_email_friend_selector").fancybox({
+        'autoSize': true,
+        'fixed': true,
+        'openEffect': 'fade',
+        'closeEffect': 'fade',
+        'afterClose': function() {
+            actionEmailFriendFormOnClosed();
+        },
+        helpers: {
+            overlay: {
+                opacity: 0.8,
+                css: {
+                    'background-color': '#404040'
+                }
+            }
+        }
+    });
+
+    $(".pitch_rewards_popup").fancybox({
+        'afterShow': function() {
+            $('#form_amount').focus();
+        },
+        'autoSize': true,
+        'fixed': true,
+        'openEffect': 'fade',
+        'closeEffect': 'fade',
+        'afterClose': function() {
+            document.getElementById('form_text').value = '';
+            document.getElementById('form_text_edit').value = '';
+            document.getElementById('form_amount').value = '';
+            document.getElementById('form_amount_edit').innerHTML = '';
+        },
+        helpers: {
+            overlay: {
+                opacity: 0.8,
+                css: {
+                    'background-color': '#404040'
+                }
+            }
+        }
+    });
+
+
+    $(".withdraw_popup").fancybox({
+        'afterShow': dashboard_focusWithdrawForm,
+        'autoSize': true,
+        'fixed': true,
+        'openEffect': 'fade',
+        'closeEffect': 'fade',
+        'afterClose': function() {
+            dashboard_clearWithdrawForm();
+        },
+        helpers: {
+            overlay: {
+                opacity: 0.8,
+                css: {
+                    'background-color': '#404040'
+                }
+            }
+        }
+    });
+
+
+    $(".post_update_popup").fancybox({
+        'autoSize': false,
+        'autoDimensions': false,
+        'minWidth': 740,
+        'minHeight': 503,
+        'maxWidth': 740,
+        'maxHeight': 503,
+        'fixed': true,
+        'openEffect': 'fade',
+        'closeEffect': 'fade',
+        'afterLoad': function() {
+
+            $('#previewUpdateDiv').hide();
+            $('#previewUpdateError1').hide();
+            $('#previewUpdateError2').hide();
+            $('#previewUpdateError3').hide();
+            $('#previewUpdateTitle').html('');
+            $('#previewUpdateText').html('');
+            $('#dashboard_pitch_update_title').val('');
+            $('#postUpdateDiv').show();
+
+            if (typeof CKEDITOR.instances.dashboard_pitch_update_text == "undefined") {
+                create_ckeditor_minimum('dashboard_pitch_update_text', {
+                    'width': '565px',
+                    'height': '215px'
+                });
+            }
+        },
+        'afterClose': function() {
+            window.location.reload();
+            /*
+             if (typeof CKEDITOR.instances.dashboard_pitch_update_text != "undefined") {
+             $('#previewUpdateTitle').html('');
+             $('#previewUpdateText').html('');
+             $('#dashboard_pitch_update_title').val('');
+             resetUpdatePreview()
+             CKEDITOR.instances.dashboard_pitch_update_text.setData('');
+             CKEDITOR.instances.dashboard_pitch_update_text.destroy(true);
+             }
+             // CHROME / SAFARI HACK:
+             //  CKEditor is non-clickable/editable when fancy box is closed and opened for a second time..
+             //  Reload ckeditor.js to redefine the CKEDITOR object !! - This may be fixed in the future
+             //  with a newer version of the editor.. who knows..?
+             if (navigator.userAgent.toLowerCase().indexOf('safari') != -1) {
+             window.CKEDITOR = undefined;
+             $('#ckjs_script').remove();
+             LoadMyJs('/ckeditor_new/ckeditor.js');
+             }
+             */
+        },
+        helpers: {
+            overlay: {
+                opacity: 0.8,
+                css: {
+                    'background-color': '#404040'
+                }
+            }
+        }
+    });
+
+    $(".icon_embed_widget_main_selector").fancybox({
+        'autoSize': true,
+        'openEffect': 'fade',
+        'closeEffect': 'fade',
+        helpers: {
+            overlay: {
+                opacity: 0.8,
+                css: {
+                    'background-color': '#404040'
+                }
+            }
+        }
+    });
+
+    $("#home_video").click(function() {
+        $.fancybox({
+            'padding': 10,
+            'autoSize': false,
+            'openEffect': 'fade',
+            'closeEffect': 'fade',
+            'title': this.title,
+            'width': 680,
+            'height': 495,
+            'href': this.href.replace(new RegExp("watch\\?v=", "i"), 'v/'),
+            'type': 'swf',
+            'swf': {
+                'wmode': 'transparent',
+                'allowfullscreen': 'true'
+            },
+            helpers: {
+                overlay: {
+                    opacity: 0.8,
+                    css: {
+                        'background-color': '#404040'
+                    }
+                }
+            }
+        });
+
+        return false;
+    });
+
+    $(".linkTerms").each(function() {
+        var this_href = $(this).attr('href');
+        var this_new_href = this_href.replace('/pg/', '/pgc/');
+        $(this).attr('href', this_new_href);
+
+        $(this).fancybox({
+            'width': '75%',
+            'height': '75%',
+            'autoSize': false,
+            'openEffect': 'fade',
+            'closeEffect': 'fade',
+            'afterClose': function() {
+
+            },
+            helpers: {
+                overlay: {
+                    opacity: 0.8,
+                    css: {
+                        'background-color': '#404040'
+                    }
+                }
+            },
+            'type': 'iframe' // prevents messing the CSS
+        });
+    });
+
+    $(".pitch_graph_selector").fancybox({
+        'autoSize': true,
+        'openEffect': 'fade',
+        'closeEffect': 'fade',
+        'afterClose': function() {
+        },
+        helpers: {
+            overlay: {
+                opacity: 0.8,
+                css: {
+                    'background-color': '#404040'
+                }
+            }
+        }
+    });
+
+    // WWW-1700
+    // If we do need to modify DOM elements we should be doing it when required not on page load
+    //makeExternalLinksOpensNewWindows('body');
+
+    if (typeof pitch_summary_notifications !== 'undefined') {
+        addNotification_1(pitch_summary_notifications);
+    }
+
+    /*
+     if ($('#form_private_first_name').val() == '') {
+     $('#form_private_first_name').focus();
+     }
+     else {
+     if (focusFlag) {
+     $('#form_password_1').focus();
+     }
+     }
+     */
+    if (document.getElementById('search_pitches_text')) {
+        $('#search_pitches_text').focus();
+        $('#search_pitches_text').keypress(function(event) {
+            if (event.keyCode == 13) {
+                $('#searchForm').submit();
+            }
+        });
+    }
+
+    // Use the oldstyle code if postcode_location_row exists
+    if (document.getElementById('postcode_location_row')) {
+        postcodeIntervalObject = self.setInterval("checkPostcodeInput()", 400);
+    } else {
+        $('#form_postcode').on('blur change keypress keyup', validatePostcode);
+    }
+
+    // User Profiling Drip Feed Question - Initialisation
+    if (random_question_id > 0) {
+        $('#dripFeedQuestion' + random_question_id).fadeIn('slow');
+        _ccTrackEvent('User Profiling', 'Show Question', random_question_id.toString());
+        /*
+         setTimeout(function() {
+
+         $('#dripFeedQuestion'+random_question_id).animate({
+         "height": "toggle",
+         "opacity": "toggle"
+         }, "slow");
+         },400);
+         }
+
+
+         */
+    }
+
+    /* Forum Topics show buttons on hover */
+    if ($('.post_body')) {
+        $('a.rate_post_up').click(function(e) {
+            e.preventDefault();
+            forumRatePost($(this), 1);
+        });
+        $('a.rate_post_down').click(function(e) {
+            e.preventDefault();
+            forumRatePost($(this), -1);
+        });
+        $('a.report_post').click(function(e) {
+            e.preventDefault();
+            forumReportPost($(this));
+        });
+
+    }
+
+    $(".disclaimer_popup").fancybox({
+        'autoSize': false,
+        'autoDimensions': false,
+        'padding': 10,
+        'width': 650,
+        'height': 430,
+        'fixed': true,
+        'openEffect': 'fade',
+        'closeEffect': 'fade',
+        'afterClose': function() {
+        },
+        helpers: {
+            overlay: {
+                opacity: 0.8,
+                css: {
+                    'background-color': '#404040'
+                }
+            }
+        }
+    });
+
+    $(".linkedin_popup").fancybox({
+        'autoSize': false,
+        'modal': true,
+        'autoDimensions': false,
+        'padding': 10,
+        'width': 450,
+        'height': 160,
+        'fixed': true,
+        'openEffect': 'fade',
+        'closeEffect': 'fade',
+        'afterShow': function() {
+            syncProfileWithLinkedIn();
+        },
+        'afterClose': function() {
+            // Reload page
+        },
+        helpers: {
+            overlay: {
+                opacity: 0.8,
+                css: {
+                    'background-color': '#404040'
+                }
+            }
+        }
+    });
+
+    $(".tutorial_popup").fancybox({
+        'autoSize': false,
+        'autoDimensions': false,
+        'padding': 10,
+        'width': 650,
+        'height': 430,
+        'fixed': true,
+        'openEffect': 'fade',
+        'closeEffect': 'fade',
+        'afterClose': function() {
+        },
+        helpers: {
+            overlay: {
+                opacity: 0.8,
+                css: {
+                    'background-color': '#404040'
+                }
+            }
+        }
+    });
+
+    $(".investee_terms_popup").fancybox({
+        'autoSize': false,
+        'autoDimensions': false,
+        'padding': 10,
+        'width': 900,
+        'height': 600,
+        'fixed': true,
+        'openEffect': 'fade',
+        'closeEffect': 'fade',
+        'afterClose': function() {
+        },
+        helpers: {
+            overlay: {
+                opacity: 0.8,
+                css: {
+                    'background-color': '#404040'
+                }
+            }
+        }
+    });
+    /*
+     $(".document_referencing_popup").fancybox({
+     'autoSize': false,
+     'autoDimensions': false,
+     'padding': 10,
+     'width': 700,
+     'height': 270,
+     'fixed': true,
+     'openEffect': 'fade',
+     'closeEffect': 'fade',
+     'afterClose': function() {
+     $('#document_referencing_agreement_id').val(1);
+     $('#hidden_save_input').attr('name', 'save');
+     $('#pitch_submission_form').submit();
+     },
+     helpers: {
+     overlay: {
+     opacity: 0.8,
+     css: {
+     'background-color': '#404040'
+     }
+     }
+     }
+     });
+     */
+    $(".pitch_manipulation_popup").fancybox({
+        'autoSize': false,
+        'autoDimensions': false,
+        'modal': true,
+        'padding': 10,
+        'width': 700,
+        'height': 370,
+        'fixed': true,
+        'openEffect': 'fade',
+        'closeEffect': 'fade',
+        'afterClose': function() {
+            $('#pitch_manipulation_agreement_id').val(1);
+            $('#hidden_submit_publish').attr('name', 'submit_publish');
+            $('#form_pitch_edit_monitor').submit();
+        },
+        helpers: {
+            overlay: {
+                opacity: 0.8,
+                css: {
+                    'background-color': '#404040'
+                }
+            }
+        }
+    });
+
+    // Do not populate the src attribute of an iframe until it is displayed
+    // WWW-1499
+    $(".cc-js-modal-iframe").on('click', function() {
+        populateIframeSrc($(this).data('target'));
+    });
+
+    var populateIframeSrc = function(container) {
+
+        var $container = $(container),
+                $iframe = $container.find('iframe');
+
+        $iframe.attr('src', $iframe.data('framesrc'));
+
+        $container.find('*[data-dismiss="modal"]').on('click', function() {
+            $iframe.attr('src', '');
+        });
+    };
+
+    if (siteID != 79) {
+        /* Add an AJAX method to handle the "invest now" submission  */
+        $('#id_invest_amount').bind('keyup change', function() {
+            // Remove any previous alerts
+            $('.invest-now .alerts').remove();
+
+            // Check that an amount has been entered and is greater than zero
+            if ($(this).val() != '' && $(this).val() != 0) {
+                setTimeout(function() {
+                    $.ajax({
+                        type: "post",
+                        url: "/ajax/validate_investment_amount.php",
+                        data: "validation=invest&"+$('#invest-now-form').serialize(),
+                        dataType: 'json',
+                        success: function(data) {
+                            if (data.error_msg != '') {
+
+                                var error_msg = data.error_msg;
+
+                                if (typeof(data.increment_options) !== 'undefined') {
+
+                                    var increment_options = data.increment_options;
+                                    error_msg += '<hr>';
+                                    error_msg += '<p>'+increment_options.retry_message+' <b>('+increment_options.original_amount+')</b></p>';
+                                    if (increment_options.prev_increment.raw != 0) {
+                                        error_msg += '<a class="btn" data-raw="'+increment_options.prev_increment.raw+'">'+increment_options.prev_increment.formatted+'</a> <span>or</span> ';
+                                    }
+                                    error_msg += '<a class="btn" data-raw="'+increment_options.next_increment.raw+'">'+increment_options.next_increment.formatted+'</a>';
+                                }
+
+                                $('.invest-now').append('<div class="alerts alert-error"><button type="button" class="close" data-dismiss="alert">×</button>' + error_msg + '</div>');
+                            }
+                        }
+                    });
+                }, 500);
+            }
+        });
+        /* Add an AJAX method to handle the "express interest" submission  */
+        $('#id_interest_amount').bind('keyup change', function() {
+            // Remove any previous alerts
+            $('.invest-now .alerts').remove();
+
+            // Check that an amount has been entered and is greater than zero
+            if ($(this).val() != '' && $(this).val() != 0) {
+                setTimeout(function() {
+                    $.ajax({
+                        type: "post",
+                        url: "/ajax/validate_investment_amount.php",
+                        data: "validation=interest&"+$('#express-interest-form').serialize(),
+                        dataType: 'json',
+                        success: function(data) {
+                            if (data.error_msg != '') {
+                                $('.invest-now').append('<div class="alerts alert-error"><button type="button" class="close" data-dismiss="alert">×</button>' + data.error_msg + '</div>');
+                            }
+                        }
+                    });
+                }, 500);
+            }
+        });
+    }
+    /**
+     * Fill the invest amount from a defined value
+     * This will generally be from a validation message
+     */
+    $('.invest-now').on('click', 'a.btn', function () {
+        var $this   = $(this),
+            $amount = $('input[name="invest_amount"]');
+
+        $amount.val($this.data('raw'));
+    });
+
+});
+
+function makeExternalLinksOpensNewWindows(selector) {
+
+    if (selector == undefined) {
+        selector = 'body';
+    }
+    var this_host = window.location.host.toLowerCase(); // this may be www.host.com OR just host.com
+    if (this_host == undefined) {
+        this_host = 'crowdcube.com'; // default domain, just in case... TODO: We may have a list of subdomains - to do!!!
+    }
+    $("a[href^='http']:not([href^='http://" + this_host + "']):not([href^='http://www." + this_host + "']):not([href^='https://" + this_host + "']):not([href^='https://www." + this_host + "']):not([href^='http://forum.crowdcube.com']):not([href^='http://blog.crowdcube.com']):not([href^='mailto:']):not([target^='_blank']), a[href$='.some-file-extension']", selector).each(function() { //.attr("target", "_blank"); (call directly if needed, instead of foreach...)
+        jQuery(this).attr("target", "_blank");
+    });
+}
+
+function buttonOverStateMenuExcludeSelected(selector, className, skipClassName) {
+    $(selector + ":not(" + skipClassName + ")").hover(function() {
+        $(this).addClass(className);
+    },
+            function() {
+                $(this).removeClass(className);
+            });
+}
+
+
+function fbs_click() {
+    u1 = $("meta[property='i_share_url']").attr('content');
+    t1 = $("meta[property='i_share_title']").attr('content');
+    if (u1 && t1) {
+        u = u1;
+        t = t1;
+    }
+    else {
+        u = location.href;
+        t = getPageTitle();
+    }
+    window.open('http://www.facebook.com/sharer.php?u=' + encodeURIComponent(u) + '&t=' + encodeURIComponent(t), 'sharer', 'toolbar=0,status=0,width=626,height=436');
+    return false;
+}
+
+
+
+function getPageTitle() {
+    var result = '';
+    var t = document.getElementsByTagName('title')[0];
+    if (!!t.childNodes.length) {
+        var result = t.firstChild.data;
+    } else if (t.innerHTML) {
+        var result = t.innerHTML;
+    }
+
+    return result;
+}
+
+function confirmDelete(msg) {
+    var agree = confirm("Delete - Are you sure?");
+    if (agree) {
+        return true;
+    }
+    else {
+        return false;
+    }
+}
+
+function openLinksInNewWindow(selector) {
+    $(selector).attr('target', '_blank');
+}
+
+
+function bindGalleryEffectTransition() {
+    $('.carousel_gallery a').hover(function() {
+        var temp_old_url = $(this).attr('href');
+        var temp_new_url = temp_old_url.replace(gal_size_preview, gal_size_middle);
+        var temp_current_url = $('#galleryMediumImage img').attr('src');
+
+        if (temp_current_url != temp_new_url) {
+            $('#galleryMediumImage a').attr('href', $(this).attr('href'));
+            $('#galleryMediumImage img').attr('src', temp_new_url);
+        }
+    });
+    $("#galleryMediumImage a").bind('click', function(e) {
+        e.preventDefault();
+        var this_url = $(this).attr('href');
+        var select_index = 0; // starts from 0
+
+        $('.carousel_gallery li a').each(function() {
+            if ($(this).attr('href') == this_url) {
+                $(this).trigger('click');
+                return false; // breaking the jquery each() loop!
+            }
+        });
+    });
+}
+
+function submitEmailFriendForm(selectedAction, form_id, test_value_1) {
+    if (selectedAction == undefined) {
+        selectedAction = 'send_email_to_friend';
+    }
+    if (form_id == undefined) {
+        form_id = '#email_a_friend_form';
+    }
+    if (test_value_1 == undefined) {
+        test_value_1 = 0;
+    }
+    var ajax_lang = $("input[name='ajax_lang']", form_id).val();
+    var var_email = $("input[name='email']", form_id).val();
+    var var_pitch_id = $("input[name='pitch_id']", form_id).val();
+    var var_partner_portal_id = $("input[name='partner_portal_id']", form_id).val();
+
+    if (var_partner_portal_id == undefined) {
+        var_partner_portal_id = 0;
+    }
+    var url_action = $("form", form_id).attr('action');
+    if (url_action == undefined) {
+        url_action = '/share-email-friend-clean';
+    }
+    $.post(
+            url_action
+            , {
+                "action": selectedAction
+                ,
+                "email": var_email
+                ,
+                "pitch_id": var_pitch_id
+                ,
+                "partner_portal_id": var_partner_portal_id
+                ,
+                "test_value_1": test_value_1
+                ,
+                "lang": ajax_lang
+            }
+    , function(responseText, textStatus, XMLHttpRequest) {
+        $(responseText).each(function(key, serverData) {
+            if (serverData.result == 1) {
+                if (serverData.position == "alert") {
+                    alert(serverData.data);
+                }
+                if (serverData.position == "update_form_text") {
+                    $("#email_a_friend .email_a_friend_messages").html(serverData.data);
+                }
+                if (serverData.position == "update_clear_form_values") {
+                    $("#email_a_friend input[name='email']").val('');
+                }
+                if (serverData.position == "update_datepicker_bind") {
+                }
+            }
+        });
+    }
+    , "json"
+            );
+}
+
+function actionEmailFriendFormOnClosed() {
+    $("#email_a_friend .email_a_friend_messages").html('');
+    $("#email_a_friend input[name='email']").val('');
+}
+
+
+function getCKEditorData_about() {
+    ck_instance_data = '';// default
+    if (typeof CKEDITOR !== 'undefined') {
+        var ck_instance = CKEDITOR.instances.form_pitch_update_about;
+        if (typeof ck_instance != 'undefined') {
+            var ck_instance_data = ck_instance.getData();
+        }
+    }
+    return ck_instance_data;
+}
+
+function getCKEditorData_text_the_idea() {
+    ck_instance_data = '';// default
+    if (typeof CKEDITOR !== 'undefined') {
+        var ck_instance = CKEDITOR.instances.form_pitch_update_the_idea;
+        if (typeof ck_instance != 'undefined') {
+            var ck_instance_data = ck_instance.getData();
+        }
+    }
+    return ck_instance_data;
+}
+
+function getCKEditorData_text_the_market() {
+    ck_instance_data = '';// default
+    if (typeof CKEDITOR !== 'undefined') {
+        var ck_instance = CKEDITOR.instances.form_pitch_update_the_market;
+        if (typeof ck_instance != 'undefined') {
+            var ck_instance_data = ck_instance.getData();
+        }
+    }
+    return ck_instance_data;
+}
+
+function getCKEditorData_text_the_people() {
+    ck_instance_data = '';// default
+    if (typeof CKEDITOR !== 'undefined') {
+        var ck_instance = CKEDITOR.instances.form_pitch_update_the_people;
+        if (typeof ck_instance != 'undefined') {
+            var ck_instance_data = ck_instance.getData();
+        }
+    }
+    return ck_instance_data;
+}
+
+function getCKEditorData_text_financials() {
+    ck_instance_data = '';// default
+    if (typeof CKEDITOR !== 'undefined') {
+        var ck_instance = CKEDITOR.instances.form_pitch_update_financials;
+        if (typeof ck_instance != 'undefined') {
+            var ck_instance_data = ck_instance.getData();
+        }
+    }
+    return ck_instance_data;
+}
+
+function getCKEditorData_exit_strategy() {
+    ck_instance_data = '';// default
+    if (typeof CKEDITOR !== 'undefined') {
+        var ck_instance = CKEDITOR.instances.form_pitch_update_exit_strategy;
+        if (typeof ck_instance != 'undefined') {
+            var ck_instance_data = ck_instance.getData();
+        }
+    }
+    return ck_instance_data;
+}
+function getCKEditorData_entr_description() {
+    ck_instance_data = '';// default
+    if (typeof CKEDITOR !== 'undefined') {
+        var ck_instance = CKEDITOR.instances.form_entr_description;
+        if (typeof ck_instance != 'undefined') {
+            var ck_instance_data = ck_instance.getData();
+        }
+    }
+    return ck_instance_data;
+}
+
+function compareStrings(str_1, str_2) {
+    if (str_1 == str_2) {
+        return true;
+    }
+    else if (MD5(str_1) == MD5(str_2)) {
+        return true;
+    }
+    else if (MD5(str_1) == 'f706efcee34ad71b472668431f782682' && MD5(str_2) == '9039450fb67fb8056e940a1e173fdf51') { // an exception is hardcoded here - it is for FF3.6, Safari (Mac), IE7, IE8. Note: Ie6 is working fine!!! - Both md5 are for the string: "<br />"
+        return true;
+    }
+    return false;
+}
+
+function openPreviewWindow() {
+
+    var errors = new Array();
+    var form_data = new Object();
+
+    // NOTE:
+    // Non-Equity Based Pitches (Loans) Require the 'Company Value' Field
+
+    // COPY For new fields:
+    // form_data. = $('#form_pitch_edit_monitor input[name=""]').val();
+
+    form_data.title = $('#form_pitch_edit_monitor input[name="title"]').val();
+
+    form_data.website = $('#form_pitch_edit_monitor input[name="website"]').val();
+    form_data.facebook_page = $('#form_pitch_edit_monitor input[name="facebook_page"]').val();
+    form_data.linkedin = $('#form_pitch_edit_monitor input[name="linkedin"]').val();
+    form_data.skype_id = $('#form_pitch_edit_monitor input[name="skype_id"]').val();
+
+    form_data.investment_request = $('#form_pitch_edit_monitor input[name="investment_request"]').val();
+    form_data.equity_offered = $('#form_pitch_edit_monitor input[name="equity_offered"]').val(); // not present on CF
+
+    form_data.location = $('#form_pitch_edit_monitor input[name="location"]').val();
+    form_data.image_1 = $('#form_pitch_edit_monitor input[name="image_1"]').val();
+    form_data.image_3 = $('#form_pitch_edit_monitor input[name="image_3"]').val();
+
+    form_data.video_url = $('#form_pitch_edit_monitor input[name="video_url"]').val();
+    form_data.entr_title = $('#form_pitch_edit_monitor input[name="entr_title"]').val();
+
+    form_data.eis = $('input:radio[name=eis]:checked').val();
+    form_data.seis = $('input:radio[name=seis]:checked').val();
+
+    form_data.a_shares = $('#form_pitch_edit_monitor input[name="a_shares"]').val();
+    form_data.b_shares = $('#form_pitch_edit_monitor input[name="b_shares"]').val();
+    form_data.a_shares_threshold = $('#form_pitch_edit_monitor input[name="a_shares_threshold"]').val();
+
+    form_data.text_the_idea = getCKEditorData_about();
+
+    form_data.text_the_idea = getCKEditorData_text_the_idea();
+    form_data.text_the_market = getCKEditorData_text_the_market();
+    form_data.text_the_people = getCKEditorData_text_the_people();
+    form_data.text_financials = getCKEditorData_text_financials();
+    form_data.exit_strategy = getCKEditorData_exit_strategy();
+    form_data.entr_description = getCKEditorData_entr_description();
+
+    // Sectors
+    $(':input[id^="sector_"]').each(function() {
+        if ($('#form_pitch_edit_monitor input[name="' + this.name + '"]').is(':checked')) {
+            form_data[this.name] = $('#form_pitch_edit_monitor input[name="' + this.name + '"]').prop('checked');
+        }
+    });
+
+    if (errors.length < 1) { // no errors
+        if (typeof form_data.title === 'undefined' || form_data.title == '') {
+            errors[1] = "Empty field: Title";
+        }
+    }
+    if (errors.length > 0) {
+        var alert_text = "Errors occured:\n";
+        $.each(errors, function(index, value) {
+            if (typeof value !== 'undefined') { // do not show undefined indexes. JS auto adds the missing indexes...
+                alert_text = alert_text + "\n- " + value;
+            }
+        });
+        alert_text = alert_text + "Please correct the errors and try again\n\n";
+        alert(alert_text);
+    }
+    else {
+        var form = document.createElement("form");
+        $(form).hide(); // it works!
+        form.setAttribute("id", "pitch_preview_form");
+        form.setAttribute("method", "post");
+        form.setAttribute("action", '/pitch-preview');
+        form.setAttribute("target", "cc_preview");
+
+        for (var this_item in form_data) {
+            var hiddenField = document.createElement("input");
+            hiddenField.setAttribute("name", this_item);
+            hiddenField.setAttribute("value", form_data[this_item]);
+            form.appendChild(hiddenField);
+            document.body.appendChild(form);
+        }
+        // Get size of monitor? make window full size of monitor?
+        window.open('/pitch-preview', 'cc_preview', 'menubar=1,resizable=1,scrollbars=1,width=1020,height=650');
+        form.submit();
+    }
+} // openPreviewWindow
+
+function elementSetVisibility(object_selector, value) {
+    if (typeof (value) !== 'undefined') {
+        if (value == 1 || value == true || value == 'visible') {
+            $(object_selector).css('visibility', 'visible'); // hidden/visible
+            return;
+        }
+    }
+    $(object_selector).css('visibility', 'hidden'); // hidden/visible
+}
+
+// function addNotification_1(params) {
+// 	$.each(params, function(key, value) {
+// 		if (value.delay && value.delay > 0) {
+// 			setTimeout(function() {
+// 				$.gritter.add({
+// 					title: value.title,
+// 					text: value.text,
+// 					image: value.image,
+// 					sticky: value.sticky,
+// 					time: value.time
+// 				});
+// 			}, value.delay);
+// 		}
+// 		else {
+// 			$.gritter.add({
+// 				title: value.title,
+// 				text: value.text,
+// 				image: value.image,
+// 				sticky: value.sticky,
+// 				time: value.time
+// 			});
+// 		}
+// 	});
+// }
+
+function setupTableRowHighlight(tableSelector, rowClassname) {
+    $(tableSelector + " tr").hover(
+            function() {
+                $(this).addClass(rowClassname);
+            },
+            function() {
+                $(this).removeClass(rowClassname);
+            }
+    );
+}
+
+function setupTableListShowHide(tableSelector, linksSelector) {
+    $(linksSelector + " a.docsListHide").hide();
+    $(tableSelector + " .row_show_hide").fadeOut();
+    $(linksSelector + " a.docsListShow").bind('click', function(e) {
+        e.preventDefault();
+        $(linksSelector + " a.docsListShow").hide();
+        $(linksSelector + " a.docsListHide").show();
+        $(tableSelector + " .row_show_hide").fadeIn(function() {
+            $(this).show(); // ie8 fix - http://bugs.jquery.com/ticket/6895 // jquery fadein ie8 not working // jquery fadein ie8 for table not working // jquery fadein ie8 for table TDs not working
+        });
+    });
+    $(linksSelector + " a.docsListHide").bind('click', function(e) {
+        e.preventDefault();
+        $(tableSelector + " .row_show_hide").fadeOut(function() {
+            $(linksSelector + " a.docsListHide").hide();
+            $(linksSelector + " a.docsListShow").show();
+        });
+    });
+}
+
+function displayPressQuestions() {
+
+    var e = document.getElementById('form_press_id');
+    var i = e.options[e.selectedIndex].value;
+
+    if (i != 1) {
+        $('#why_crowdfunding').slideUp();
+        $('#alternative_finance').slideUp();
+        $('#use_investment').slideUp();
+    }
+    else {
+        $('#why_crowdfunding').slideDown();
+        $('#alternative_finance').slideDown();
+        $('#use_investment').slideDown();
+    }
+}
+
+var oldPostcode = '';
+var currentPostcode = '';
+var postcodeValid = false;
+
+function checkPostcodeInput() {
+
+    currentPostcode = $('#form_postcode').val();
+
+    // First time the interval runs don't lookup postcode
+    // prevents a lookup on page load. We only want to look up
+    // when the users types a different or new postcode
+    if (!postcodeLookupFlag) {
+        postcodeLookupFlag = true;
+        oldPostcode = currentPostcode;
+        return;
+    }
+
+    currentPostcode = currentPostcode.replace(/^\s+|\s+$/g, '');
+    currentPostcode = currentPostcode.replace(/ +/g, " ");
+
+    if (currentPostcode == '') {
+        if (currentPostcode != oldPostcode) {
+            $('#postcode_location_row').hide();
+        }
+        return;
+    }
+
+    // Check if the current value of the postcode field is different to the old one stored
+    if (currentPostcode != oldPostcode) {
+
+        $('#postcode_location_row').hide();
+
+        if (/^([A-PR-UWYZ0-9][A-HK-Y0-9][AEFGHJKMNPRSTUVXY0-9]?[ABEHMNPRVWXY0-9]? {0,1}[0-9][ABD-HJLN-UW-Z]{2})$/i.test(currentPostcode)) {
+
+            // Check 2nd and 3rd character of postcode - one of them must be numeric
+            if (/[0-9]/.test(currentPostcode.substring(1, 2)) || /[0-9]/.test(currentPostcode.substring(2, 3))) {
+
+                postcodeValid = true;
+                $('#postcode_valid').val(1);
+                $('#invalid_postcode_message').hide();
+
+                // If no spaces present, insert a space between two halves of postcode
+                if (currentPostcode.indexOf(' ') == -1) {
+                    var len = currentPostcode.length;
+                    for (var i = len; i > -1; i--) {
+                        if (/\d/.test(currentPostcode.substring(i, i + 1))) {
+                            postLeft = currentPostcode.substring(0, i);
+                            postRight = currentPostcode.substring(i, len);
+                            currentPostcode = postLeft + ' ' + postRight;
+                            break;
+                        }
+                    }
+                }
+                currentPostcode = currentPostcode.toUpperCase();
+                oldPostcode = currentPostcode;
+                $('#form_postcode').val(currentPostcode);
+
+                var ix = currentPostcode.indexOf(' ');
+                var pc = currentPostcode.substring(0, ix);
+                postcodeLookup(pc);
+                return;
+            }
+            else {
+                postcodeValid = false;
+                $('#postcode_valid').val(0);
+                //console.log('changing to invalid');
+                //console.log('current:'+currentPostcode+'<');
+                //console.log('old:'+oldPostcode+'<');
+                oldPostcode = currentPostcode;
+                if (currentPostcode.length > 5) {
+                    $('#invalid_postcode_message').show();
+                }
+                else {
+                    $('#invalid_postcode_message').hide();
+                }
+            }
+        }
+        else {
+            postcodeValid = false;
+            $('#postcode_valid').val(0);
+            //console.log('changing to invalid');
+            //console.log('current:'+currentPostcode+'<');
+            //console.log('old:'+oldPostcode+'<');
+            oldPostcode = currentPostcode;
+            if (currentPostcode.length > 5) {
+                $('#invalid_postcode_message').show();
+            }
+            else {
+                $('#invalid_postcode_message').hide();
+            }
+        }
+    }
+    else {
+        oldPostcode = currentPostcode;
+    }
+}
+
+function postcodeLookup(postcode) {
+
+    $.ajax({
+        url: "/ajax/postcodeLookup.php",
+        data: "pc=" + postcode,
+        success: function(data) {
+            data = $.parseJSON(data);
+            if (data == 0) {
+                $('#postcode_location').html('Unknown location.');
+                $('#postcode_location_row').slideDown();
+            }
+            // Valid postcode - Display location and set hidden input to be submitted
+            else {
+                $('#postcode_location_value').val(data.location);
+                $('#postcode_country_value').val(data.country);
+                $('#postcode_country_id_value').val(data.country_id);
+
+                $('#postcode_location').html(data.location + ', '
+                        + data.country
+                        + '. <span style="font-size:10px;color:#e0e0e0;">(approximate)</span>');
+                $('#postcode_location_row').slideDown();
+            }
+        }
+    });
+}
+
+function toggleASharesInput() {
+
+    if ($('#form_a_shares').is(':checked') && $('#form_b_shares').is(':checked')) {
+        $('#aSharesDiv').slideDown();
+    }
+    else {
+        $('#aSharesDiv').slideUp();
+    }
+}
+
+function dashboard_editReward(pitch_id, reward_id) {
+
+    $('#editRewardId').val(reward_id);
+    $.ajax({
+        url: "/ajax/getRewardData.php",
+        data: {
+            pitch_id: pitch_id,
+            reward_id: reward_id
+        },
+        success: function(data) {
+            data = $.parseJSON(data);
+            if (data.error == 0) {
+                $('#form_amount_edit').val(data.amount);
+                $('#form_text_edit').val(data.desc);
+            }
+            else {
+                alert('Error: ' + data.error);
+            }
+        }
+    });
+}
+
+function dashboard_focusRewardsForm() {
+
+}
+
+function dashboard_AddReward(pitch_id) {
+
+    var amount = $('#form_amount').val().replace(/^\s+|\s+$/g, '');
+    if (amount == '' || amount % 10 != 0) {
+        alert("Please enter a threshold for this reward (numbers only, no symbols or punctuation)");
+        return;
+    }
+    var text = $('#form_text').val().replace(/^\s+|\s+$/g, '');
+    if (text == '') {
+        alert("Please enter a description for this reward");
+        return;
+    }
+    $('#addNewRewardButton').css('display', 'none');
+    $('#addNewRewardButton_wait').css('display', 'block');
+    $.ajax({
+        url: "/ajax/addNewReward.php",
+        data: {
+            pitch_id: pitch_id,
+            amount: amount,
+            text: text
+        },
+        type: 'POST',
+        success: function(data) {
+            var data = $.parseJSON(data);
+            if (data.error == 0) {
+                dashboard_redrawRewardsTable(pitch_id, data);
+                $.fancybox.close();
+                $('#addNewRewardButton').css('display', 'block');
+                $('#addNewRewardButton_wait').css('display', 'none');
+            }
+            else {
+                alert('Error Adding Reward: ' + data.error);
+                //$.fancybox.close();
+                $('#addNewRewardButton').css('display', 'block');
+                $('#addNew2RewardButton_wait').css('display', 'none');
+            }
+        }
+    });
+}
+
+function dashboard_deleteReward(pitch_id, reward_id) {
+
+    var ok = confirm('Are you sure you want to delete this reward?');
+    if (!ok) {
+        return;
+    }
+    $.ajax({
+        url: "/ajax/deleteReward.php",
+        data: {
+            pitch_id: pitch_id,
+            reward_id: reward_id
+        },
+        success: function(data) {
+            data = $.parseJSON(data);
+            if (data.error == 0) {
+                dashboard_redrawRewardsTable(pitch_id, data);
+            }
+            else {
+                alert("Error Deleting Reward");
+            }
+        }
+    });
+}
+
+function dashboard_UpdateReward(pitch_id) {
+
+    var reward_id = $('#editRewardId').val();
+    var amount = $('#form_amount_edit').val().replace(/^\s+|\s+$/g, '');
+    if (amount == '' || amount % 10 != 0) {
+        alert("Please enter a threshold for this reward (numbers only, no symbols or punctuation)");
+        return;
+    }
+    var text = $('#form_text_edit').val().replace(/^\s+|\s+$/g, '');
+    if (text == '') {
+        alert("Please enter a description for this reward");
+        return;
+    }
+
+
+    $('#updateRewardButton').css('display', 'none');
+    $('#updateRewardButton_wait').css('display', 'block');
+    $.ajax({
+        url: "/ajax/updateReward.php",
+        data: {
+            pitch_id: pitch_id,
+            reward_id: reward_id,
+            amount: amount,
+            text: text
+        },
+        success: function(data) {
+            var data = $.parseJSON(data);
+            if (data.error == 0) {
+                dashboard_redrawRewardsTable(pitch_id, data);
+                $.fancybox.close();
+                $('#updateRewardButton').css('display', 'block');
+                $('#updateRewardButton_wait').css('display', 'none');
+            }
+            else {
+                alert('Error: ' + data.error);
+                //$.fancybox.close();
+                $('#updateRewardButton').css('display', 'block');
+                $('#updateRewardButton_wait').css('display', 'none');
+            }
+        }
+    });
+}
+
+function dashboard_redrawRewardsTable(pitch_id, data) {
+
+    var num_rows = data['num_rows'];
+
+    if (num_rows == 0) {
+        $('#rewardsTableDiv').html("You do not have any rewards for your pitch yet");
+        return;
+    }
+    var tableHTML = '<table class="table table-bordered table-striped" id="rewardsTable">';
+    tableHTML += '<thead><tr>';
+    tableHTML += '<th style="width: 15%;">Amount</th>';
+    tableHTML += '<th>Description</th>';
+    tableHTML += '<th style="width: 20%;">Actions</th>';
+    tableHTML += '</tr></thead><tbody>';
+
+    var id = 0;
+    var rowClass = '';
+    var row_count = 1;
+
+    for (i in data) {
+        if (i != 'error' && i != 'num_rows') {
+            if (row_count % 2 == 0) {
+                rowClass = 'even';
+            }
+            else {
+                rowClass = 'odd';
+            }
+            id = data[i]['id'];
+            tableHTML += '<tr><td>' + data[i]['amount'] + '</td>';
+            tableHTML += '<td>' + data[i]['text'] + '</td>';
+            tableHTML += '<td class="b" id="rewardTable_' + id + '">';
+            tableHTML += '<a id="newFancyboxLink_' + id + '" class="pitch_rewards_popup" href="#pitch_edit_reward_popup_div" onclick="dashboard_editReward(' + pitch_id + ',' + id + ')">edit</a>';
+            tableHTML += '&nbsp;&nbsp;<a style="cursor:pointer;" onclick="dashboard_deleteReward(' + pitch_id + ',' + id + ');">delete</a></td>';
+            tableHTML += '</tr>';
+            row_count++;
+        }
+    }
+    tableHTML += '</tbody></table>';
+
+    $('#rewardsTableDiv').html(tableHTML);
+
+    for (i in data) {
+        if (i != 'error' && i != 'num_rows') {
+            $('#newFancyboxLink_' + data[i]['id']).fancybox({
+                'autoSize': true,
+                'fixed': true,
+                'openEffect': 'none',
+                'closeEffect': 'none',
+                'afterClose': function() {
+                    document.getElementById('form_text').value = '';
+                    document.getElementById('form_text_edit').value = '';
+                    document.getElementById('form_amount').innerHTML = '';
+                    document.getElementById('form_amount_edit').innerHTML = '';
+                }
+            });
+        }
+    }
+}
+
+/*
+ * Don't ned to translate Withdraw Request forms as all new International sites
+ * will have users' balances set to Zero and therefore will never be used
+ *
+ */
+
+function dashboard_validateWithdrawForm() {
+
+    var amount = $('#w_amount').val().replace(/^\s+|\s+$/g, '');
+    var your_name = $('#w_your_name').val().replace(/^\s+|\s+$/g, '');
+    var bank_name = $('#w_bank_name').val().replace(/^\s+|\s+$/g, '');
+    var sort_code = $('#w_sort_code').val().replace(/^\s+|\s+$/g, '');
+    var account_number = $('#w_account_number').val().replace(/^\s+|\s+$/g, '');
+    var reason = $('#w_reason').val().replace(/^\s+|\s+$/g, '');
+
+    var missingFields = '';
+
+    if (your_name == '') {
+        missingFields += "Your Name\n";
+    }
+    if (bank_name == '') {
+        missingFields += "Bank Name\n";
+    }
+    if (sort_code == '') {
+        missingFields += "Bank Sort Code\n";
+    }
+    if (account_number == '') {
+        missingFields += "Bank Account Number\n";
+    }
+    if (amount == '') {
+        missingFields += "Amount\n";
+    }
+    if (reason == '') {
+        missingFields += "Reason\n";
+    }
+    if (missingFields != '') {
+        alert('Please complete the following fields:\n\n' + missingFields);
+        return;
+    }
+
+    $('#withdrawSubmitButton_div').hide();
+    $('#withdrawConfirmButtons_div').show();
+}
+
+function dashboard_confirmWithdrawForm() {
+
+    var amount = escape($('#w_amount').val().replace(/^\s+|\s+$/g, ''));
+    var your_name = escape($('#w_your_name').val().replace(/^\s+|\s+$/g, ''));
+    var bank_name = escape($('#w_bank_name').val().replace(/^\s+|\s+$/g, ''));
+    var sort_code = escape($('#w_sort_code').val().replace(/^\s+|\s+$/g, ''));
+    var account_number = escape($('#w_account_number').val().replace(/^\s+|\s+$/g, ''));
+    var reason = $('#w_reason').val().replace(/^\s+|\s+$/g, '');
+
+    var params = 'amount=' + amount + '&your_name=' + your_name + '&bank_name=' + bank_name
+            + '&account_number=' + account_number + '&sort_code=' + sort_code + '&reason=' + reason;
+
+    $.ajax({
+        url: "/ajax/processWithdraw.php",
+        data: params,
+        success: function(data) {
+            data = $.parseJSON(data);
+            $('#finances_withdraw_form').hide();
+            if (data.error == 0) {
+                $('#withdraw_request_id').html('<b>' + data.id + '</b>');
+                $('#finances_withdraw_message').show();
+            }
+            else {
+                $('#withdraw_errors').html(data.error);
+                $('#withdraw_error').show();
+            }
+        }
+    });
+}
+
+function dashboard_closeWithdrawErrors() {
+
+    $('#withdrawConfirmButtons_div').hide();
+    $('#withdraw_error').hide();
+    $('#withdrawSubmitButton_div').show();
+    $('#finances_withdraw_form').show();
+}
+
+function dashboard_backToWithdrawForm() {
+
+    $('#withdrawConfirmButtons_div').hide();
+    $('#withdrawSubmitButton_div').show();
+}
+
+function dashboard_focusWithdrawForm() {
+
+    $('#w_your_name').focus();
+    $('.linkTerms').unbind();
+}
+
+function dashboard_clearWithdrawForm() {
+
+    $('#w_amount').val('');
+    $('#w_your_name').val('');
+    $('#w_bank_name').val('');
+    $('#w_sort_code').val('');
+    $('#w_account_number').val('');
+    $('#w_reason').val('');
+    $('#withdrawSubmitButton_div').show();
+    $('#withdrawConfirmButtons_div').hide();
+    $('#finances_withdraw_form').show();
+    $('#finances_withdraw_message').hide();
+}
+
+function openSliderInvestments() {
+    var open_height = $("#slider_div_investments").attr("box_h") + "px";
+    $("#slider_div_investments").animate({
+        "height": open_height
+    }, {
+        duration: "fast"
+    });
+    $("#slider_div_investments_link").html("show less investments");
+    $("#slider_div_investments_link").unbind();
+    $("#slider_div_investments_link").click(function() {
+        closeSliderInvestments();
+    });
+}
+
+function closeSliderInvestments() {
+    $("#slider_div_investments").animate({
+        "height": sliderHeightInvestments
+    }, {
+        duration: "fast"
+    });
+    $("#slider_div_investments_link").html("show more investments");
+    $("#slider_div_investments_link").unbind();
+    $("#slider_div_investments_link").click(function() {
+        openSliderInvestments();
+    });
+}
+
+function openSliderUpdates() {
+    updatesOpen = 1;
+    var open_height = $("#slider_div_updates").attr("box_h") + "px";
+    $("#slider_div_updates").animate({
+        "height": open_height
+    }, {
+        duration: "fast"
+    });
+    $("#slider_div_updates_link").html("show less updates");
+    $("#slider_div_updates_link").unbind();
+    $("#slider_div_updates_link").click(function() {
+        closeSliderUpdates();
+    });
+}
+
+function closeSliderUpdates() {
+    updatesOpen = 0;
+    $("#slider_div_updates").animate({
+        "height": sliderHeightUpdates
+    }, {
+        duration: "fast"
+    });
+    $("#slider_div_updates_link").html("show more updates");
+    $("#slider_div_updates_link").unbind();
+    $("#slider_div_updates_link").click(function() {
+        openSliderUpdates();
+    });
+}
+
+
+function openSliderForum() {
+    var open_height = $("#slider_div_forum").attr("box_h") + "px";
+    $("#slider_div_forum").animate({
+        "height": open_height
+    }, {
+        duration: "fast"
+    });
+    $("#slider_div_forum_link").html("show less posts");
+    $("#slider_div_forum_link").unbind();
+    $("#slider_div_forum_link").click(function() {
+        closeSliderForum();
+    });
+}
+
+function closeSliderForum() {
+    $("#slider_div_forum").animate({
+        "height": sliderHeightForum
+    }, {
+        duration: "fast"
+    });
+    $("#slider_div_forum_link").html("show more posts");
+    $("#slider_div_forum_link").unbind();
+    $("#slider_div_forum_link").click(function() {
+        openSliderForum();
+    });
+}
+
+function newsfeedUpdateReadMore(updateID) {
+    $('#newsfeed_update_text_snippet_' + updateID).hide();
+    $('#newsfeed_update_text_full_' + updateID).fadeIn("slow");
+    return false;
+}
+
+function newsfeedUpdateCommentReadMore(commentID) {
+    $('#newsfeed_update_comment_text_snippet_' + commentID).hide();
+    $('#newsfeed_update_comment_text_full_' + commentID).fadeIn("slow");
+    return false;
+}
+
+function cleanTextArea(id) {
+    if ($('#commentTextArea_' + id).val() == 'write a comment...') {
+        $('#commentTextArea_' + id).val('');
+        $('#commentTextArea_' + id).html('');
+    }
+}
+
+var currentTextAreaID = 0;
+
+function offScreenDivUpdate(textAreaID) {
+    currentTextAreaID = textAreaID;
+}
+
+function initTextAreaMonitor() {
+    textAreaMonitorObject = self.setInterval("textAreaMonitor()", 400);
+}
+
+function textAreaMonitor() {
+    if (currentTextAreaID == 0) {
+        return;
+    }
+    var commentText = $('#commentTextArea_' + currentTextAreaID).val();
+    commentText = commentText.replace(/\n\r/g, "<br />");
+    commentText = commentText.replace(/\n/g, "<br />");
+    commentText = commentText.replace(/\r/g, "<br />");
+
+    $('#portfolio_offScreenDiv').val(commentText);
+    $('#portfolio_offScreenDiv').html(commentText);
+
+    var h_on = $('#commentTextArea_' + currentTextAreaID).height();
+    var h_off = $('#portfolio_offScreenDiv').height();
+
+    //console.log('H on:'+h_on);
+    //console.log('H off:'+h_off);
+
+    if (h_off == 0) {
+        return;
+    }
+    if (h_off < 31) {
+        h_off = 31;
+    }
+    if (h_on != h_off) {
+        $('#commentTextArea_' + currentTextAreaID).animate({
+            height: (h_off)
+        },
+        {
+            duration: "fast"
+        });
+    }
+}
+
+function postComment(pitchID, updateID) {
+
+    var text = $('#commentTextArea_' + updateID).val();
+    text = $.trim(text);
+
+    if (text == '' || text == ('write a comment...')) {
+        $('#commentTextArea_' + updateID).val('');
+        $('#commentTextArea_' + updateID).html('');
+        $('#commentTextArea_' + updateID).focus();
+        return;
+    }
+
+    //window.clearInterval(textAreaMonitorObject);
+    $('#portfolio_offScreenDiv').html('');
+    $('#commentTextArea_' + updateID).height(31);
+    $('#commentTextArea_' + updateID).val('');
+    $('#commentTextArea_' + updateID).html('');
+
+    $.ajax({
+        type: "post",
+        url: "ajax/postUpdateComment.php",
+        data: {
+            pitch_id: pitchID,
+            update_id: updateID,
+            text: text
+        },
+        success: function(data) {
+            data = $.parseJSON(data);
+            if (data.error == 0) {
+                var newCommentID = data.newCommentID;
+                var commentDateTime = data.commentDateTime;
+                var cleanText = data.cleanText;
+
+                var html = '<div class="clear"></div>';
+                html += '<div style="display:none;" class="newsfeed_update_comment_container" id="newsfeed_update_comment_container_' + newCommentID + '">';
+                html += '<div class="newsfeed_thumbs3">';
+                html += '<img style="margin-left:' + inv_pic_margin_x + 'px;margin-top:' + inv_pic_margin_y + 'px;"';
+                html += 'width="' + inv_pic_width + '" height="' + inv_pic_height + '"';
+                html += 'src="' + inv_pic_src + '" />';
+                html += '</div>';
+                html += '<div class="newsfeed_update_comment_text_container">';
+                html += '<div class="newsfeed_update_comment_user_name">';
+                html += inv_username;
+                html += '</div>';
+                html += '<div class="newsfeed_update_comment_text">';
+                html += '<div id="newsfeed_update_comment_text_full_' + newCommentID + '" class="newsfeed_update_comment_text_full">';
+                html += cleanText;
+                html += '</div>';
+                html += '</div>';
+                html += '<div class="forum_post_summary">';
+                html += commentDateTime;
+                html += '</div>';
+                html += '</div>';
+                html += '<div class="clear"></div>';
+                html += '</div>';
+
+                if (typeof newsfeedUpdates[updateID] === "undefined") {
+                    $('#newsfeed_update_container_' + updateID).after(html);
+                }
+                else {
+                    $('#newsfeed_update_comment_container_' + newsfeedUpdates[updateID]).after(html);
+                }
+                $('#newsfeed_update_comment_container_' + newCommentID).fadeIn('slow');
+                $('#commentTextArea_' + updateID).val('write a comment...');
+                newsfeedUpdates[updateID] = newCommentID;
+                //initTextAreaMonitor();
+            }
+        }
+    });
+}
+
+function showCommentBox(updateID) {
+    if ($('#commentTextArea_' + updateID)) {
+        cleanTextArea(updateID);
+    }
+    $('#newsfeed_update_comment_container_' + updateID).show();
+    $('#commentTextArea_' + updateID).focus();
+    offScreenDivUpdate(updateID);
+}
+
+
+function previewPitchUpdate() {
+
+    var ck_instance = CKEDITOR.instances.dashboard_pitch_update_text;
+    var text = encodeURIComponent(ck_instance.getData());
+    var title = encodeURIComponent($('#dashboard_pitch_update_title').val());
+
+    $.ajax({
+        type: "post",
+        url: "ajax/sanitizeUpdatePost.php",
+        data: "title=" + title + "&text=" + text,
+        success: function(data) {
+
+            data = $.parseJSON(data);
+
+            var cleanTitle = data.title;
+            var cleanText = data.text;
+            var cleanError = data.error;
+
+            $('#postUpdateDiv').hide();
+            $('#previewUpdateDiv').show();
+
+            if (cleanError == 0) {
+                $('#previewUpdateTitle').html(cleanTitle);
+                $('#previewUpdateText').html(cleanText);
+            }
+            else {
+                // Missing Title
+                if (cleanError == 1) {
+                    $('#previewUpdateError1').show();
+                }
+                // Missing Text
+                else if (cleanError == 2) {
+                    $('#previewUpdateError2').show();
+                }
+                // Missing Title and Text
+                else if (cleanError == 3) {
+                    $('#previewUpdateError3').show();
+                }
+            }
+        }
+    });
+}
+
+function resetUpdatePreview() {
+    $('#previewUpdateDiv').hide();
+    $('#previewUpdateTitle').html('');
+    $('#previewUpdateText').html('');
+    $('#previewUpdateError1').hide();
+    $('#previewUpdateError2').hide();
+    $('#previewUpdateError3').hide();
+
+    $('#postingUpdateDiv').hide();
+    $('#postingUpdateError1').hide();
+    $('#postingUpdateError2').hide();
+    $('#postingUpdateError3').hide();
+    $('#postingUpdateSuccess').hide();
+    $('#postingUpdateOKButton').hide();
+    $('#postingUpdateOKButton2').hide();
+}
+
+function closeUpdatePreview() {
+
+    resetUpdatePreview();
+
+    $('#postUpdateDiv').show();
+    var ck_instance = CKEDITOR.instances.dashboard_pitch_update_text;
+    ck_instance.focus();
+}
+
+function cancelPitchUpdate() {
+    $.fancybox.close();
+    window.location.reload();
+    /*
+     closeUpdatePreview();
+     $.fancybox.close();
+     window.location.reload();
+     */
+}
+
+function closePitchUpdateOK() {
+    $.fancybox.close();
+    window.location.reload();
+    /*
+     resetUpdatePreview();
+     $.fancybox.close();
+     */
+
+}
+
+function updateUpdateTable(data) {
+    $('#slider_div_updates').html(data.html);
+
+    var t_height = $('#updates_table').height();
+
+    $('#slider_div_updates').each(function() {
+        var current = $(this);
+        current.attr("box_h", t_height);
+    });
+
+    if (updatesOpen == 1) {
+        $("#slider_div_updates").animate({
+            "height": t_height
+        }, {
+            duration: "fast"
+        });
+    }
+}
+
+// PORTFOLIO
+function showCommentBox_new(itemIndex) {
+    $('#post_comment_link_' + itemIndex).hide();
+    $('#post_comment_box_' + itemIndex).show();
+    $('#post_comment_textarea_' + itemIndex).focus();
+}
+
+function newsfeedUpdateReadMore_new(updateID) {
+    $('#newsfeed_update_text_snippet_' + updateID).hide();
+    $('#newsfeed_update_text_full_' + updateID).fadeIn("slow");
+    return false;
+}
+
+function newsfeedUpdateCommentReadMore_new(commentID) {
+    $('#newsfeed_update_comment_text_snippet_' + commentID).hide();
+    $('#newsfeed_update_comment_text_full_' + commentID).fadeIn("slow");
+    return false;
+}
+
+function postNewsfeedComment_new(pitchID, itemID, itemType, itemIndex) {
+    var token = $('#post_comment_box_' + itemIndex + ' > input[name="token"]').val();
+    var text = $('#post_comment_textarea_' + itemIndex).val();
+    text = $.trim(text);
+
+    if (text == '') {
+        $('#post_comment_textarea_' + itemIndex).val('');
+        $('#post_comment_textarea_' + itemIndex).html('');
+        $('#post_comment_textarea_' + itemIndex).focus();
+        return;
+    }
+    $('#postCommentButton' + itemID).prop('disabled', true);
+    $('#postCommentBusy' + itemID).show();
+
+    $.ajax({
+        type: "post",
+        url: "ajax/postUpdateComment2.php",
+        data: {
+            pitch_id: pitchID,
+            item_id: itemID,
+            text: text,
+            item_type: itemType,
+            token: token
+        },
+        success: function(data) {
+            //console.log('DATA:'+data);
+            data = $.parseJSON(data);
+            if (data.error == 0) {
+                $(data.html).insertBefore('#post_comment_box_' + itemIndex);
+                $('#post_comment_box_' + itemIndex).hide();
+                $('#newsfeed_comment_' + data.commentID).fadeIn();
+                $('#post_comment_link_' + itemIndex).fadeIn();
+                $('#portfolio_offScreenDiv').html('');
+                $('#post_comment_textarea_' + itemIndex).height(44);
+                $('#post_comment_textarea_' + itemIndex).val('');
+                $('#post_comment_textarea_' + itemIndex).html('');
+            }
+            else {
+                alert('Something went wrong, we are working on it.');
+            }
+            $('#postCommentBusy' + itemID).hide();
+            $('#postCommentButton' + itemID).prop('disabled', false);
+        }
+    });
+}
+
+function pollAnimateCallback(width, index) {
+    //console.log('callback - index:'+index+' width:'+width);
+    if (width == 0) {
+        //console.log('Hiding: ' + '#pollProgressBar' + index);
+        $('#pollProgressBar' + index).hide();
+    }
+}
+
+function deletePoll(pitchID, questionID, msg) {
+    var ok = confirm(msg);
+    if (!ok) {
+        return;
+    }
+    $.ajax({
+        type: "post",
+        url: "ajax/deletePoll.php",
+        data: {
+            pid: pitchID,
+            qid: questionID
+        },
+        success: function(data) {
+            data = $.parseJSON(data);
+            var error = data.error;
+            if (error == 0) {
+                window.location.reload();
+            }
+        }
+    });
+}
+
+function loadMoreNewsfeed(
+        filterParam,
+        sortByParam,
+        activityParam,
+        limitStart,
+        pollsLimitStart,
+        startDate,
+        endDate,
+        index,
+        noTopics,
+        noPolls,
+        noFinancials,
+        portfolioPitchIDs,
+        pitchID,
+        entrepreneurNewsfeed) {
+
+    /*
+     // Params below used if the lazy load is automatic (not a button click)
+
+     filterParam = $('#lazyNewsfeedDataSpan').data('filterparam');
+     sortByParam = $('#lazyNewsfeedDataSpan').data('sortbyparam');
+     activityParam = $('#lazyNewsfeedDataSpan').data('activityparam');
+     limitStart = $('#lazyNewsfeedDataSpan').data('limitstart');
+     limitNumber = $('#lazyNewsfeedDataSpan').data('limitnumber');
+     startDate = $('#lazyNewsfeedDataSpan').data('startdate');
+     endDate = $('#lazyNewsfeedDataSpan').data('enddate');
+     index = $('#lazyNewsfeedDataSpan').data('index');
+     noTopics = $('#lazyNewsfeedDataSpan').data('notopics');
+     noPolls = $('#lazyNewsfeedDataSpan').data('nopolls');
+     noFinancials = $('#lazyNewsfeedDataSpan').data('nofinancials');
+     portfolioPitchIDs = $('#lazyNewsfeedDataSpan').data('portfoliopitchids');
+     pitchID = $('#lazyNewsfeedDataSpan').data('pitchid');
+     entrepreneurNewsfeed = $('#lazyNewsfeedDataSpan').data('entrepreneurNewsfeed');
+     console.log('loadMoreNewsfeed...');
+     */
+    $('#loadMoreNewsfeedButton').hide();
+    $('#loadingNewsfeedImage').show();
+
+    $.ajax({
+        type: "post",
+        url: "ajax/lazyNewsfeedChunk.php",
+        data: {
+            filterParam: filterParam,
+            sortByParam: sortByParam,
+            activityParam: activityParam,
+            limitStart: limitStart,
+            pollsLimitStart: pollsLimitStart,
+            startDate: startDate,
+            endDate: endDate,
+            index: index,
+            noTopics: noTopics,
+            noPolls: noPolls,
+            noFinancials: noFinancials,
+            portfolioPitchIDs: portfolioPitchIDs,
+            pitchID: pitchID,
+            entrepreneurNewsfeed: entrepreneurNewsfeed
+        },
+        success: function(data) {
+            //console.log('DATA:'+data);
+            data = $.parseJSON(data);
+            if (data.error == 0) {
+                //console.log(data);
+                $('#loadingNewsfeedImage').hide();
+                $(data.newsfeed_html).insertBefore('#lazyLoadNewsfeedInsertPoint');
+                $('#loadMoreButtonContainer').html(data.newsfeed_button);
+            }
+            else {
+                //console.log('ERROR: '+data);
+            }
+        }
+    });
+
+}
+// END PORTFOLIO
+
+
+
+
+
+
+
+
+function clickBannerImage(filename, slide_id, text_id) {
+    $('#slide' + slide_id + '_main_img').attr('src', "/images/banner/slide" + slide_id + "/" + filename);
+    $('.slide' + slide_id + '_text').hide();
+    $('#slide' + slide_id + '_text' + text_id).show();
+//console.log('#slide' + slide_id + '_text' + text_id);
+}
+
+
+/*
+ *
+ *  FORUM Functions
+ *
+ */
+jQuery.fn.extend({
+    insertAtCaret: function(myValue) {
+        return this.each(function(i) {
+            if (document.selection) {
+                //For browsers like Internet Explorer
+                this.focus();
+                var sel = document.selection.createRange();
+                sel.text = myValue;
+                this.focus();
+            }
+            else if (this.selectionStart || this.selectionStart == '0') {
+                //For browsers like Firefox and Webkit based
+                var startPos = this.selectionStart;
+                var endPos = this.selectionEnd;
+                var scrollTop = this.scrollTop;
+                this.value = this.value.substring(0, startPos) + myValue + this.value.substring(endPos, this.value.length);
+                this.focus();
+                this.selectionStart = startPos + myValue.length;
+                this.selectionEnd = startPos + myValue.length;
+                this.scrollTop = scrollTop;
+            } else {
+                this.value += myValue;
+                this.focus();
+            }
+        })
+    }
+});
+function getCaretPosition(element) {
+    var caretPos = 0;	// IE Support
+    if (document.selection) {
+        element.focus();
+        var sel = document.selection.createRange();
+        sel.moveStart('character', -element.value.length);
+        caretPos = sel.text.length;
+    }
+    // Firefox support
+    else if (element.selectionStart || element.selectionStart == '0') {
+        caretPos = element.selectionStart;
+    }
+    return caretPos;
+}
+function setCaretPosition(element, pos) {
+    if (element.setSelectionRange)
+    {
+        element.focus();
+        element.setSelectionRange(pos, pos);
+    }
+    else if (element.createTextRange) {
+        var range = element.createTextRange();
+        range.collapse(true);
+        range.moveEnd('character', pos);
+        range.moveStart('character', pos);
+        range.select();
+    }
+}
+function insertForumTag(e, startText, endText, startTagLength, cursorBackPos, urlFlag) {
+    var element = document.getElementById(e);
+    var range = $(element).getSelection();
+    var start = range.start;
+    var end = range.end;
+    //console.log('start:'+start);
+    //console.log('end:'+end);
+    if (end > start) {
+        setCaretPosition(element, start);
+        $(element).insertAtCaret(startText);
+        setCaretPosition(element, end + startTagLength);
+        $(element).insertAtCaret(endText);
+        if (urlFlag) {
+            setCaretPosition(element, start + 12);
+        }
+    }
+    else {
+        $(element).insertAtCaret(' ' + startText + endText + ' ');
+        setCaretPosition(element, getCaretPosition(element) - cursorBackPos);
+    }
+}
+function forumInsertQuote(e, id, username) {
+    var element = document.getElementById(e);
+    var quoteText = '[quote user="' + username + '"]' + rawTopicPosts[id].post_text + '[/quote]\n';
+    //console.log(quoteText);
+    $(element).insertAtCaret(quoteText);
+}
+function forumNewPage(formID, formAction, pageNum) {
+    $('#' + formID).attr("action", formAction);
+    $('#new_page_id').attr("value", 1);
+    $('#' + formID).submit();
+}
+function scrollToBottomOfContainer(e) {
+    var element = document.getElementById(e);
+    var text = $(element).val();
+    setCaretPosition(element, text.length);
+    $(element).animate({
+        scrollTop: $(element).prop('scrollHeight')
+    }, 1300);
+}
+
+function validatePostcode(event) {
+    if (typeof validatePostcode.s_FullNewPostcode == 'undefined') {
+        var s_FullNewPostcode = '';
+        var s_FullOldPostcode = '';
+        var s_TriggerLookupValue = '';
+    }
+
+    var a_FirstPart = null;
+    var a_FullPostcode = null;
+    var s_CurrentPostcode = $('#form_postcode').val();
+
+    /**
+     * Hack for other UK Portals to use SiteID = 1. Need UK/Non-UK Meta Item
+     */
+    if (1 == siteID || 79 == siteID) {
+        //console.log('1 or 79',siteID,s_CurrentPostcode);
+        a_FirstPart = /^(?:([A-PR-UWYZ](?:[0-9](?:[0-9]|[A-HJKSTUW])?|[A-HK-Y][0-9](?:[0-9]|[ABEHMNPRVWXY])?)))/i.exec(s_CurrentPostcode);
+        if (a_FullPostcode = /^(?:([A-PR-UWYZ](?:[0-9](?:[0-9]|[A-HJKSTUW])?|[A-HK-Y][0-9](?:[0-9]|[ABEHMNPRVWXY])?))\s?([0-9][ABD-HJLNP-UW-Z]{2}))$/i.exec(s_CurrentPostcode.replace(/ /g, ''))) {
+            validatePostcode.s_NewPostcode = a_FullPostcode[1].concat(' ', a_FullPostcode[2]).toUpperCase();
+        }
+        i_MinLengthForError = 4;
+    } else if (2 == siteID) {
+        a_FirstPart = /^([0-9]{3})/i.exec(s_CurrentPostcode);
+        if (a_FullPostcode = /^([0-9]{3})\s?([0-9]{2})$/i.exec($('#form_postcode').val().replace(/ /g, ''))) {
+            validatePostcode.s_NewPostcode = a_FullPostcode[1].concat(' ', a_FullPostcode[2]).toUpperCase();
+        }
+        i_MinLengthForError = 3;
+    }
+
+    //console.log('First Part', a_FirstPart);
+    //console.log('Full Postcode', a_FullPostcode);
+    //console.log('MinLengthForError', i_MinLengthForError);
+    //console.log('Old / New Postcode', validatePostcode.s_OldPostcode, validatePostcode.s_NewPostcode);
+    //console.log('Lookup Trigger vs Part', validatePostcode.s_TriggerLookupValue, a_FirstPart[1]);
+
+    if (a_FirstPart && a_FirstPart[1] != validatePostcode.s_TriggerLookupValue) {
+        validatePostcode.s_TriggerLookupValue = a_FirstPart[1];
+        lookupPostcode(a_FirstPart[1]);
+    }
+
+    if (validatePostcode.s_NewPostcode != validatePostcode.s_OldPostcode) {
+        $('#form_postcode').val(validatePostcode.s_NewPostcode);
+        validatePostcode.s_OldPostcode = validatePostcode.s_NewPostcode;
+    }
+
+    if (!a_FullPostcode && s_CurrentPostcode.length > i_MinLengthForError) {
+        $('#label_postcode').addClass('error');
+        $('#form_postcode_validation').show();
+        $('#invalid_postcode_message').show();
+    }
+    else {
+        $('#label_postcode').removeClass('error');
+        $('#form_postcode_validation').hide();
+        $('#invalid_postcode_message').hide();
+    }
+}
+
+function lookupPostcode(s_LookupValue) {
+    $.ajax({
+        url: "/ajax/postcodeLookup.php",
+        data: {
+            pc: s_LookupValue
+        },
+        success: function(data) {
+            data = $.parseJSON(data);
+            if (data == 0) {
+                $('#form_postcode_validation').show();
+                $('#form_location_row').slideUp();
+            }
+            // Valid postcode - Display location and set hidden input to be submitted
+            else {
+                $('#form_location').html(data.location + ', ' + data.country + '. <span style="font-size:10px;color:#e0e0e0;">(approximate)</span>');
+                $('#form_location_row').slideDown();
+                $('#form_postcode_validation').hide();
+                $('input[name="hidden[country]"]').val(data.country);
+                $('input[name="hidden[country_id]"]').val(data.country_id);
+                $('input[name="hidden[location]"]').val(data.location);
+                $('input[name="hidden[outcode]"]').val(data.outcode);
+            }
+        }
+    });
+}
+
+function waitDocumentUploading() {
+    $('#docUploadButton').hide();
+    $('#docUploadWaitSpan').show();
+}
+
+/**
+ * User Profiling Functions
+ */
+
+/**
+ * child_id - The numeric question ID used to display the question DIV
+ * reponses_id - If any one of these responses are selected, display the question DIV
+ * selection type: "SINGLE" - it's a drop down menu to look at
+ *                 "MULTIPLE" - it's a group of checkboxes to look at
+ */
+function showChildQuestion(question_id, child_id, response_ids, selection_type) {
+
+    var ids = response_ids.split(",");
+
+    var show = false;
+    for (var i = 0; i < ids.length; i++) {
+
+        if (selection_type == "SINGLE") {
+
+            if (ids[i] == $('#id_question' + question_id).val()) {
+                show = true;
+                break;
+            }
+        }
+        else if (selection_type == "MULTIPLE") {
+            // TO DO...
+        }
+    }
+    if (show) {
+        $('#question_div_' + child_id).slideDown();
+    }
+    else {
+        $('#question_div_' + child_id).slideUp();
+        $('#question_div_' + child_id).find(':checkbox').each(function() {
+            jQuery(this).attr('checked', false);
+        });
+    }
+}
+
+function showOtherPleaseSpecifyQuestion(question_id) {
+    if ($('#id_question' + question_id).val() == 0) {
+        $('#other_question_div' + question_id).slideDown();
+        $('#freetext_' + question_id + '_input').focus();
+    }
+    else {
+        $('#other_question_div' + question_id).slideUp();
+    }
+}
+
+function subscribeForumTopic(topicID, mode) {
+
+    mode = (mode) ? 1 : 0; // convert boolean to int
+
+    $('#subscribeTopicEmailIcon1').hide();
+    $('#subscribeTopicBusyIcon1').show();
+
+    $.ajax({
+        url: "/ajax/subscribeForumTopic.php",
+        data: {
+            topicID: topicID,
+            mode: mode
+        },
+        success: function(data) {
+            data = $.parseJSON(data);
+            $('#subscribeTopicBusyIcon1').hide();
+            $('#subscribeTopicEmailIcon1').show();
+            if (data.error == 0) {
+                //console.log('OK');
+                // If we are unsubscribing, show subscribe link
+                if (mode == 0) {
+                    $('#unsubscribeTopicText').hide();
+                    $('#subscribeTopicText').show();
+                }
+                // If we are subscribing, show unsubscribe link
+                else {
+                    $('#subscribeTopicText').hide();
+                    $('#unsubscribeTopicText').show();
+                }
+                $('#subscribeTopicSettingsSavedText').show();
+                window.setTimeout(function() {
+                    $('#subscribeTopicSettingsSavedText').fadeOut();
+                }, 1500);
+            }
+            else {
+                //console.log('Error: ' + data.msg);
+            }
+        }
+    });
+}
+
+function confirmDeleteForumPost(postID, msg) {
+    var ok = confirm(msg);
+    if (!ok) {
+        return;
+    }
+    $('#deletePostForm' + postID).submit();
+}
+
+function confirmDeleteForumTopic(topicID, msg) {
+    var ok = confirm(msg);
+    if (!ok) {
+        return;
+    }
+    $('#deleteTopicForm' + topicID).submit();
+}
+
+function forumRatePost(el, rating) {
+    var postID = el.data('post');
+    console.log('post ' + postID + ' rated ' + rating);
+    $.ajax({
+        url: "/ajax/forumPostTools.php",
+        type: "POST",
+        data: "id=" + postID + '&v=' + rating,
+        success: function(data) {
+            console.log(data);
+            el.after('<span class="label label-success thanks"><i class="icon-white icon-ok"></i> Thanks</span>');
+            $('a.rate_post').filter(function() {
+                return $(this).data('post') == postID
+            }).hide();
+            setTimeout(function() {
+                $('span.thanks').fadeOut();
+            }, 1000);
+        }
+    });
+}
+function forumReportPost(el) {
+    var postID = el.data('post');
+    $('#reportPostID').val(parseInt(postID));
+    $.fancybox({
+        'autoSize': true,
+        'autoDimensions': true,
+        'padding': 10,
+        'fixed': true,
+        'openEffect': 'fade',
+        'closeEffect': 'fade',
+        'afterClose': function() {
+        },
+        'href': "#report_post",
+        helpers: {
+            overlay: {
+                opacity: 0.8,
+                css: {
+                    'background-color': '#404040'
+                }
+            }
+        }
+    });
+}
+function forumReportPostSubmit() {
+    // get vals from report_post_form and ping to server
+    $.ajax({
+        type: "post",
+        url: "/ajax/forumPostTools.php",
+        data: $("#report_post_form").serialize(),
+        success: function(data) {
+            // open new fancybox for message
+            var div = '<div class="lead text-center p20">Thank you for your report.<br/>We will review the post and take action if required.<br/><br/><button class="btn btn-primary" type="button" onclick="$.fancybox.close()">Close Window</button></div>';
+            $.fancybox({
+                'autoSize': true,
+                'autoDimensions': true,
+                'padding': 10,
+                'fixed': true,
+                'content': div,
+                'openEffect': 'fade',
+                'closeEffect': 'fade',
+                'afterClose': function() {
+                    window.location.reload(true);
+                },
+                helpers: {
+                    overlay: {
+                        opacity: 0.8,
+                        css: {
+                            'background-color': '#404040'
+                        }
+                    }
+                }
+            });
+        }
+    });
+
+    return false;
+}
+
+function backToCreateInvestorEmail()
+{
+    $('#contactInvestorsBusyImage').hide();
+    $('#contactInvestorsSendingMsg').hide();
+    $('#contactInvestorsFormDiv').show();
+    $('#contactInvestorsSuccessDiv').hide();
+    $('#contactInvestorsErrorDiv').hide();
+
+    $('#contactInvestorsPreview').hide();
+    $('#contactInvestorsPreview div.modal-body').html('');
+}
+
+function contactInvestorsPreviewEmail(pitchId) {
+
+    var data = {
+        pitch_id: pitchId,
+        subject: $('#contactInvestorsSubjectLine').val(),
+        message: $('#contactInvestorsTextarea').val()
+    };
+
+    if (data.message.length === 0) {
+        return;
+    }
+
+    $.ajax({
+        url: "/ajax/contactInvestorsSendEmailPreview.php",
+        type: "post",
+        data: data,
+        success: function(data) {
+            $('#contactInvestorsBusyImage').hide();
+            $('#contactInvestorsSendingMsg').hide();
+            $('#contactInvestorsFormDiv').hide();
+            $('#contactInvestorsSuccessDiv').hide();
+            $('#contactInvestorsErrorDiv').hide();
+
+            $('#contactInvestorsPreview').show();
+            $('#contactInvestorsPreview div.modal-body').html(data);
+        }
+    });
+}
+
+function contactInvestorsSendEmail(pitchID) {
+
+    var message = $.trim($('#contactInvestorsTextarea').val()),
+            subject = $.trim($('#contactInvestorsSubjectLine').val()),
+            send_cc = $('#contactInvestorsSendCC').is(':checked') ? 1 : 0,
+            audience = $('#contactInvestorsAudience').val();
+
+    if (message == '' || subject == '') {
+        return;
+    }
+
+    $('#contactInvestorsButton').hide();
+    $('#contactInvestorsBusyImage').show();
+    $('#contactInvestorsSendingMsg').show();
+
+    var formData = {
+        pitch_id: pitchID,
+        message:  message,
+        subject:  subject,
+        send_cc:  send_cc,
+        audience: audience
+    };
+
+    $.ajax({
+        url: "/ajax/contactInvestorsSendEmail.php",
+        type: "post",
+        data: formData,
+        success: function(data) {
+            $('#contactInvestorsBusyImage').hide();
+            $('#contactInvestorsSendingMsg').hide();
+            $('#contactInvestorsFormDiv').hide();
+            $('#contactInvestorsButton').show();
+            data = $.parseJSON(data);
+            if (data.error == 0) {
+                //console.log('OK:'+data.debug);
+                $('#contactInvestorsSuccessDiv').show();
+            }
+            else {
+                //console.log('Error: ' + data.msg);
+                $('#contactInvestorsErrorDiv').show();
+            }
+        }
+    });
+}
+
+function requestMeetingSendEmail(pitchID) {
+
+    var updatedEmail = $('#updatedEmail').val().trim();
+    //console.log('email:'+updatedEmail);
+
+    if (updatedEmail == '') {
+
+        $('#requestMeetingBusyImage').hide();
+        $('#requestMeetingFormDiv').hide();
+        $('#requestMeetingErrorHTML').text("Please enter your email address");
+        $('#requestMeetingErrorDiv').show();
+
+        return false;
+    }
+
+    $('#requestMeetingButton').hide();
+    $('#requestMeetingBusyImage').show();
+
+    var formData = {
+        pitch_id: pitchID,
+        email: updatedEmail
+    };
+    $.ajax({
+        url: "/ajax/requestMeetingSendEmail.php",
+        type: "post",
+        data: formData,
+        success: function(data) {
+            $('#requestMeetingBusyImage').hide();
+            $('#requestMeetingFormDiv').hide();
+            $('#requestMeetingButton').show();
+            data = $.parseJSON(data);
+            if (data.error == 0) {
+                //console.log('OK:'+data.debug);
+                $('#requestMeetingSuccessDiv').show();
+                if (updatedEmail != '') {
+                    $('#requestMeetingUserEmail').text(updatedEmail);
+                }
+            }
+            else {
+                //console.log('Error: ' + data.error);
+                $('#requestMeetingErrorHTML').text(data.error);
+                $('#requestMeetingErrorDiv').show();
+            }
+        }
+    });
+}
+
+function requestCallSendEmail(pitchID) {
+    var updatedTelephone = $('#updatedTelephone').val().trim();
+
+    // Cannot request a call without a valid telephone number
+    if (updatedTelephone == '' || !(/^\d{6,}$/).test(updatedTelephone.replace(/[\s()+\-\.]|ext/gi, ''))) {
+
+        var error_msg = updatedTelephone == '' ? "Please enter a telephone number" : "Please enter a valid telephone number";
+
+        $('#requestCallBusyImage').hide();
+        $('#requestCallFormDiv').hide();
+        $('#requestCallErrorHTML').text(error_msg);
+        $('#requestCallErrorDiv').show();
+
+        return false;
+    }
+
+    $('#requestCallButton').hide();
+    $('#requestCallBusyImage').show();
+
+    var formData = {
+        pitch_id: pitchID,
+        telephone: updatedTelephone
+    };
+    $.ajax({
+        url: "/ajax/requestCallSendEmail.php",
+        type: "post",
+        data: formData,
+        success: function(data) {
+            $('#requestCallBusyImage').hide();
+            $('#requestCallFormDiv').hide();
+            $('#requestCallButton').show();
+            data = $.parseJSON(data);
+            if (data.error == 0) {
+                //console.log('OK:'+data.debug);
+                $('#requestCallSuccessDiv').show();
+                if (updatedTelephone != '') {
+                    $('#requestCallUserTelephone').text(updatedTelephone);
+                }
+            }
+            else {
+                //console.log('Error: ' + data.error);
+                $('#requestCallErrorHTML').text(data.error);
+                $('#requestCallErrorDiv').show();
+            }
+        }
+    });
+}
+
+function requestBusinessPlanSendEmail(pitchID) {
+    var updatedEmail = $('#updatedEmail2').val().trim();
+
+    if (updatedEmail == '') {
+
+        $('#requestBusinessPlanBusyImage').hide();
+        $('#requestBusinessPlanFormDiv').hide();
+        $('#requestBusinessPlanErrorHTML').text("Please enter your email address");
+        $('#requestBusinessPlanErrorDiv').show();
+
+        return false;
+    }
+
+    $('#requestBusinessPlanButton').hide();
+    $('#requestBusinessPlanBusyImage').show();
+
+    var formData = {
+        pitch_id: pitchID,
+        email: updatedEmail
+    };
+    $.ajax({
+        url: "/ajax/requestBusinessPlanSendEmail.php",
+        type: "post",
+        data: formData,
+        success: function(data) {
+            $('#requestBusinessPlanBusyImage').hide();
+            $('#requestBusinessPlanFormDiv').hide();
+            $('#requestBusinessPlanButton').show();
+            data = $.parseJSON(data);
+            if (data.error == 0) {
+                //console.log('OK:'+data.debug);
+                $('#requestBusinessPlanSuccessDiv').show();
+                if (updatedEmail != '') {
+                    $('#requestBusinessPlanUserEmail').text(updatedEmail);
+                }
+            }
+            else {
+                //console.log('Error: ' + data.error);
+                $('#requestBusinessPlanErrorHTML').text(data.error);
+                $('#requestBusinessPlanErrorDiv').show();
+            }
+        }
+    });
+}
+
+function contactEntrepreneurSendEmail(pitchID) {
+
+    var message = $.trim($('#contactEntrepreneurTextarea').val()),
+            updatedEmail = $('#updatedEmail3').val().trim();
+
+    if (message == '' || updatedEmail == '') {
+
+        var error_msg = message == '' ? "Please enter a message" : "Please enter your email address";
+
+        $('#contactEntrepreneurBusyImage').hide();
+        $('#contactEntrepreneurFormDiv').hide();
+        $('#contactEntrepreneurRequestErrorDiv').show();
+        $('#contactEntrepreneurErrorHTML').text(error_msg);
+
+        return false;
+    }
+
+    $('#contactEntrepreneurButton').hide();
+    $('#contactEntrepreneurBusyImage').show();
+
+    var formData = {
+        pitch_id: pitchID,
+        message: message,
+        email: updatedEmail
+    };
+    $.ajax({
+        url: "/ajax/contactEntrepreneurSendEmail.php",
+        type: "post",
+        data: formData,
+        success: function(data) {
+            $('#contactEntrepreneurBusyImage').hide();
+            $('#contactEntrepreneurFormDiv').hide();
+            $('#contactEntrepreneurButton').show();
+            data = $.parseJSON(data);
+            if (data.error == 0) {
+                //console.log('OK:'+data.debug);
+                $('#contactEntrepreneurSuccessDiv').show();
+                if (updatedEmail != '') {
+                    $('#contactEntrepreneurUserEmail').text(updatedEmail);
+                }
+            }
+            else {
+                //console.log('Error: ' + data.msg);
+                $('#contactEntrepreneurErrorHTML').text(data.error);
+                $('#contactEntrepreneurRequestErrorDiv').show();
+            }
+        }
+    });
+}
+
+function backToRequestMeetingDiv() {
+    $('#requestMeetingBusyImage').hide();
+    $('#requestMeetingErrorDiv').hide();
+    $('#requestMeetingButton').show();
+    $('#requestMeetingFormDiv').show();
+}
+
+function backToRequestCallDiv() {
+    $('#requestCallBusyImage').hide();
+    $('#requestCallErrorDiv').hide();
+    $('#requestCallButton').show();
+    $('#requestCallFormDiv').show();
+}
+
+function backToRequestBusinessPlanDiv() {
+    $('#requestBusinessPlanBusyImage').hide();
+    $('#requestBusinessPlanErrorDiv').hide();
+    $('#requestBusinessPlanButton').show();
+    $('#requestBusinessPlanFormDiv').show();
+}
+
+function backToContactEntrepreneurDiv() {
+    $('#contactEntrepreneurBusyImage').hide();
+    $('#contactEntrepreneurRequestErrorDiv').hide();
+    $('#contactEntrepreneurButton').show();
+    $('#contactEntrepreneurFormDiv').show();
+}
+
+function updateUserProfileQuestion(form, question_id) {
+
+    //console.log('ID:'+question_id);
+    //console.log('DATA:'+$('#'+form).serialize());
+
+    $('#submitDripFeedQuestion' + question_id).hide();
+    $('#busySubmitDripFeedImage' + question_id).show();
+
+    $.ajax({
+        type: 'POST',
+        contentType: 'application/x-www-form-urlencoded',
+        url: '/ajax/updateUserProfileQuestion.php',
+        data: $('#' + form).serialize(),
+        success: function(data) {
+            //console.log('Data:'+data);
+            data = $.parseJSON(data);
+            var id;
+            //console.log('test'+data.errors.valid_question_ids);
+            for (id in data.errors.valid_question_ids) {
+                $('#error' + data.errors.valid_question_ids[id]).hide()
+            }
+            for (id in data.errors.invalid_question_ids) {
+                $('#submitDripFeedQuestion' + question_id).show();
+                $('#busySubmitDripFeedImage' + question_id).hide();
+                $('#error' + data.errors.invalid_question_ids[id]).fadeIn('slow')
+            }
+            // If question answered successfully, hide this question and display the next one (if exists)
+            if (data.success) {
+                _ccTrackEvent("User Profiling", "Submit Question", question_id.toString()); // Track Submission
+                //console.log('SUCCESS:'+data.success.id);
+                //console.log('COMPLETE:'+data.complete+'%');
+                // delete the question from the unanswered questions array ...
+                var position = $.inArray(question_id, unanswered_questions);
+                //console.log('position:'+position);
+                //console.log('length:'+unanswered_questions.length);
+                if (~position) {
+                    unanswered_questions.splice(position, 1);
+                    //console.log('length2:'+unanswered_questions.length);
+                    //console.log(unanswered_questions);
+                }
+                // Check if there are any questions left in the list of unanswered questions
+                var items = unanswered_questions.length;
+                if (items > 0) {
+                    // Choose another random question
+                    var i = 0;
+                    var new_question_id;
+                    var r = Math.floor(Math.random() * (items + 1));
+                    for (var key in unanswered_questions) {
+                        new_question_id = unanswered_questions[key];
+                        //console.log('looking at:'+new_question_id+' - '+unanswered_questions[key]);
+                        if (i == r) {
+                            break;
+                        }
+                        i++;
+                    }
+                    //console.log('Using:'+new_question_id+' - '+unanswered_questions[key]);
+                    // Hide current question and display new one
+
+                    $('#dripFeedQuestion' + question_id).hide();
+                    $('.percentComplete').width(data.complete + '%');
+                    $('#dripFeedQuestion' + new_question_id).fadeIn('slow');
+                    _ccTrackEvent("User Profiling", "Show Question", new_question_id.toString());
+
+                    /*
+                     $('#dripFeedQuestion' + question_id).animate({
+                     "height": "toggle",
+                     "opacity": "toggle"
+                     }, "slow",function() {
+                     // Display new percentage once the answered question has been hidden
+                     // and before the new question is displayed
+                     //console.log('new % '+data.complete);
+                     $('.animate').width(data.complete+'%');
+
+                     $('#dripFeedQuestion' + new_question_id).animate({
+                     "height": "toggle",
+                     "opacity": "toggle"
+                     }, "slow");
+                     });
+                     */
+
+                }
+                // All questions complete, send message back via ajax to reset login count
+                else {
+                    //console.log('reseting login count');
+                    $.ajax({
+                        url: "/ajax/skipUserProfileQuestion.php",
+                        type: "post",
+                        success: function(data) {
+                            // Hide current question
+                            $('#dripFeedQuestion' + question_id).hide();
+                            $('#userProfilingCompleteDiv').fadeIn('slow');
+                            //console.log('COMPLETE !');
+                        }
+                    });
+                }
+            }
+            else {
+                //console.log('Invalid Answer');
+            }
+        }
+    });
+}
+
+function skipUserProfileDripFeedQuestion(question_id) {
+
+    $('#skipDripFeedQuestion' + question_id).hide();
+    $('#busySkipDripFeedImage' + question_id).show();
+
+    $('#dripFeedQuestion' + question_id).animate({
+        "height": "toggle",
+        "opacity": "toggle"
+    }, "slow");
+    $.ajax({
+        url: "/ajax/skipUserProfileQuestion.php",
+        type: "post",
+        success: function(data) {
+            _ccTrackEvent("User Profiling", "Skip Question", question_id.toString());
+            $('#skipDripFeedQuestion' + question_id).show();
+            $('#busySkipDripFeedImage' + question_id).hide();
+        }
+    });
+}
+
+function linkedInPlatformLoadedCallback() {
+    //console.log('LinkedIn Platform Loaded Event');
+    //console.log('module: '+module);
+
+    if (IN.User.isAuthorized()) {
+        //console.log('$.ready - user authed');
+    }
+    else {
+        //console.log('$.ready - user NOT authed');
+    }
+    IN.Event.onOnce(IN, 'auth', linkedInAuthCallback);
+}
+
+/*
+ function linkedInSystemReadyCallback() {
+ console.log('LinkedIn System Ready Event');
+ }
+ */
+
+function linkedInAuthCallback() {
+    $('#loadingLinkedInProfile').show();
+}
+
+function onLinkedInAuth() {
+    //console.log('onLinkedInAuth()');
+    IN.API.Profile("me")
+            .fields(["id", "firstName", "lastName", "emailAddress", "pictureUrl;secure=true"])
+            .result(function(profile) {
+                var emailAddress = profile.values[0].emailAddress;
+                var firstName = profile.values[0].firstName;
+                var lastName = profile.values[0].lastName;
+                var pictureUrl = profile.values[0].pictureUrl;
+
+                // Check if LinkedIn ID is in our user table - if so retrieve their username to populate the form
+                $.ajax({
+                    url: "/ajax/processLinkedIn.php",
+                    type: 'POST',
+                    contentType: 'application/x-www-form-urlencoded',
+                    data: 'email=' + emailAddress + '&action=check',
+                    success: function(data) {
+                        data = $.parseJSON(data);
+
+                        if (data.validLinkedInCookie == 1) {
+                            // CC Account already linked with LinkedIn - Login the user automatically
+                            if (data.ccAccountLinkedInLinked == 1) {
+                                // LinkedIn credentials set in session, submit form preserving redirect value
+                                if (module == 'user_login') {
+                                    $('#linkedInRedirectForm').submit();
+                                }
+                                // Trying to login from registration page
+                                else {
+                                    $('#linkedInRedirectForm').submit();
+                                }
+                            }
+                            // CC Account Not linked with LinkedIn, but we have matched
+                            // their LinkedIn email address with a CC account email address
+                            else if (data.emailMatch == 1) {
+                                if (module == 'user_login') {
+                                    populateLinkedInProfileDiv(firstName, lastName, pictureUrl);
+                                    $('#linkedIn_profile').fadeIn('slow');
+                                    $('#form_user_name').val(data.user_name);
+                                    $('#form_password').focus();
+                                }
+                                else if (module == 'user_registration' || module == 'registration') {
+                                    //console.log('redirecting to login');
+                                    $('#linkedInRedirectForm').submit();
+                                }
+                            }
+                            // We don't know who they are - they may be a CC user or they may need to register - show Login Message
+                            else {
+                                populateLinkedInProfileDiv(firstName, lastName, pictureUrl);
+                                $('#linkedIn_profile').fadeIn('slow');
+                                if (module == 'user_login') {
+                                    //console.log('unknown user... ask to link accounts');
+                                    $('#linkedIn_profile').fadeIn('slow');
+                                }
+                                else {
+                                    $('#form_private_first_name').val(firstName);
+                                    $('#form_private_last_name').val(lastName);
+                                    $('#form_email').val(emailAddress);
+                                }
+                                $('#form_user_name').focus();
+                            }
+                        }
+                        else {
+                            //console.log('Invalid LinkedIn Cookie');
+                        }
+                    }
+                });
+            });
+}
+
+function populateLinkedInProfileDiv(firstName, lastName, pictureUrl) {
+    $('#linkedIn_profile_first_name').html(firstName);
+    $('#linkedIn_profile_last_name').html(lastName);
+    $('#linkedIn_profile_img').attr('src', pictureUrl);
+    $('#linkedInUIControl').hide();
+    $('#loadingLinkedInProfile').hide();
+    $('#linkedinStartDiv').hide();
+    $('#linkedinOr').hide();
+}
+
+function hideLinkedInImportProfileButton() {
+    $('#manualSyncLinkedInProfileButton').hide();
+    //$('#importingLinkedInProfile').show();
+}
+
+function onLinkedInAuthViaProfilePage() {
+    //console.log('onLinkedInAuthViaProfilePage()');
+    //IN.API.Profile("me")
+    //.fields(["id","firstName","lastName","pictureUrl;secure=true"])
+    //.result(function(profile) {
+    //console.log('Linking Accounts');
+    //var firstName = profile.values[0].firstName;
+    //var lastName = profile.values[0].lastName;
+    //var pictureUrl = profile.values[0].pictureUrl;
+
+    $.ajax({
+        url: "/ajax/processLinkedIn.php",
+        type: 'POST',
+        contentType: 'application/x-www-form-urlencoded',
+        data: 'action=link',
+        success: function(data) {
+            //console.log('Data:'+data);
+            data = $.parseJSON(data);
+            if (data.ccAccountLinkedInLinked == 1) {
+                //console.log('Accounts Linked!');
+                //populateLinkedInProfileDiv(firstName, lastName, pictureUrl);
+                $('#linkedin_popup_link').trigger('click');
+            }
+            else {
+                //console.log('Problem linking accounts!');
+            }
+            $('#importingLinkedInProfile').hide();
+            //$('#manualSyncLinkedInProfileButton').show();
+        }
+    });
+    //});
+}
+
+function syncProfileWithLinkedIn() {
+    $('#syncProfileButtons').hide();
+    $('#syncingLinkedInProfile').show();
+    $.ajax({
+        url: "/ajax/processLinkedIn.php",
+        type: 'POST',
+        contentType: 'application/x-www-form-urlencoded',
+        data: 'action=sync',
+        success: function(data) {
+            //console.log('Data:'+data);
+            data = $.parseJSON(data);
+            if (data.syncOK == 1) {
+                //console.log('Synced Accounts');
+                window.location.href = window.location.href;
+            }
+            else {
+                //console.log('Problem syncing accounts!');
+            }
+        }
+    });
+}
+
+function limitInputCharacters(textArea, limit, msgID) {
+    var len = textArea.value.length;
+    if (len >= limit) {
+        textArea.value = textArea.value.substring(0, limit);
+    }
+    len = textArea.value.length;
+    //console.log('len:'+len);
+    //console.log('limit:'+limit);
+
+    if (len == limit) {
+        $('#' + msgID).text(0);
+    }
+    else {
+        $('#' + msgID).text(limit - len);
+    }
+}
+
+
+function limitInputCharactersSoftLimit(msgID, warningID, ck_instance) {
+
+    var limit = $("#" + msgID).data("char_limit");
+    //console.log('msgID:'+msgID);
+    //console.log('limit:'+limit);
+
+    var text = ck_instance.getData().replace(/(?:<[^<>]+?>|[\r\n]+)/gi, '').replace(/&nbsp;/gi, ' ');
+    var len = text.length;
+    //console.log(text);
+
+    $('#' + msgID).text(limit - len);
+    if (len <= limit) {
+        //$('#'+msgID).text(0);
+        $('#' + msgID).css('color', '#747474');
+        $('#' + warningID).hide();
+    }
+    else {
+        $('#' + msgID).css('color', '#f02020');
+        $('#' + warningID).show();
+    }
+}
+
+function initOffScreenTextArea() {
+    var height = $('#portfolioOffScreenTextarea').height();
+    var scrollHeight = $('#portfolioOffScreenTextarea').get(0).scrollHeight;
+    var heightDiff = scrollHeight - height;
+
+    $('.newsfeed_comments_textarea').bind('input propertychange', function() {
+
+        var commentText = $(this).val();
+        commentText = commentText.replace(/^\s/, "");
+        $(this).val(commentText);
+
+        $('#portfolioOffScreenTextarea').val(commentText);
+
+        var textareaHeight = $(this).height();
+        var scrollHeight = $('#portfolioOffScreenTextarea').get(0).scrollHeight;
+
+        if (textareaHeight !== (scrollHeight - heightDiff)) {
+            $(this).animate({
+                height: scrollHeight - heightDiff
+            }, {duration: "fast"
+            });
+        }
+    });
+
+    //$('#super-footer-container').waypoint(loadMoreNewsfeed); // Bind lazyload event
+}
+
+$( document ).ready(function() {
+    // Set the follow status for a particular pitch and user.
+    function setPitchFollowStatusForUser(element, pitchId, state)
+    {
+        // Remove any errors
+        element.find('.followError').hide();
+
+        var formData = 'pitch_id=' + pitchId + '&follow=' + state;
+
+        changeStateDisplay(element, state);
+
+        if(mixpanel){
+            if(window.pitch){
+                console.log("THIS");
+                window.pitch.follow(state);
+            }else{
+                //This is on the investments page.
+                mixpanel.track('Follow Click', {
+                    follow_state: state ? "Followed" : "Unfollowed",
+                    pitch_id: pitchId,
+                    location: "Pitch List"
+                });
+            }
+        }
+
+        $.ajax({
+            url : "/ajax/followPitch.php",
+            type: "POST",
+            data : formData,
+            dataType: 'json',
+            success: function(data, textStatus, jqXHR)
+            {
+                if (data.error == 1)
+                {
+                    // An error has occured so make the user aware of this
+                    element.find('.followError').show();
+
+                    // Reset the follow status if an error has occured
+                    if ( element.find('.followedText').length > 0)
+                    {
+                        changeStateDisplay(element, 0);
+                    }
+                    else
+                    {
+                        changeStateDisplay(element, 1);
+                    }
+                }
+            }
+        });
+    }
+
+    // Updates the status for the follow button e.g. from unfollowing to following and vice-versa
+    function changeStateDisplay(element, state)
+    {
+        if (state == 0)
+        {
+            element.find('.followedText').hide();
+            element.find('.unfollowedText').show();
+            element.removeClass('linkUnfollow');
+            element.addClass('linkFollow');
+        }
+
+        if (state == 1)
+        {
+            element.find('.followedText').show();
+            element.find('.unfollowedText').hide();
+            element.removeClass('linkFollow');
+            element.addClass('linkUnfollow');
+        }
+    }
+
+    // When the follow/unfollow button is clicked instantly change the follow status (suggestion from Ben).
+    // Then, fire off an AJAX request to persist the request to the database.
+    $(document.body).on('click', '.follow-pitch a.loggedin', function(e)
+    {
+        e.preventDefault();
+
+        var pitchId = $(this).data('pitchId');
+        var follow = 1;
+
+        // Make sure that we have a pitch id before we start
+        if (typeof(pitchId) != "undefined" && pitchId !== null)
+        {
+
+            // If the user has clicked the 'follow' link
+            if ($(this).hasClass('linkUnfollow') !== false)
+            {
+                follow = 0;
+            }
+
+            // If the user has clicked the 'unfollow' link
+            if ($(this).hasClass('linkFollow') !== false)
+            {
+                follow = 1;
+            }
+
+            setPitchFollowStatusForUser($(this), pitchId, follow);
+        }
+    });
+
+    if ($('#set-default-account__modal').length) {
+        $('#set-default-account__submit').on('click', function() {
+           $('#set-default-account__form').submit();
+        });
+    }
+});
